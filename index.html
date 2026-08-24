@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sistema de Estudo, Corretor de Seguros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --preto:#0a0a0a;
+  --carvao:#141414;
+  --carvao2:#1c1c1c;
+  --borda:#2a2a2a;
+  --creme:#f2ede1;
+  --creme2:#a8a394;
+  --cinza:#6f6a5e;
+  --amarelo:#F8FF88;
+  --verde:#7ee08a;
+  --vermelho:#ff7a6b;
+  --azul:#8ab4ff;
+  --raio:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+  background:var(--preto); color:var(--creme);
+  font-size:15px; line-height:1.55;
+  padding-bottom:86px;
+  overscroll-behavior-y:contain;
+}
+button{font-family:inherit}
+h1,h2,h3{font-weight:900;letter-spacing:-.3px;margin:0}
+.wrap{max-width:820px;margin:0 auto;padding:16px 14px 0}
+
+/* topo */
+header{
+  position:sticky;top:0;z-index:40;background:rgba(10,10,10,.94);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--borda);
+}
+.topo{max-width:820px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.topo .marca{font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:.5px;line-height:1.1}
+.topo .marca span{color:var(--amarelo)}
+.topo .sub{font-size:10.5px;color:var(--cinza);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.topo .dir{margin-left:auto;display:flex;gap:8px;align-items:center}
+.pill{
+  border:1px solid var(--borda);background:var(--carvao);color:var(--creme2);
+  border-radius:999px;padding:6px 11px;font-size:11px;font-weight:700;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.4px;white-space:nowrap
+}
+.pill.on{background:var(--amarelo);color:var(--preto);border-color:var(--amarelo)}
+
+/* nav inferior */
+nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(10,10,10,.97);border-top:1px solid var(--borda);
+  backdrop-filter:blur(10px);padding-bottom:env(safe-area-inset-bottom)
+}
+nav .nwrap{max-width:820px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav button{
+  background:none;border:none;color:var(--cinza);padding:11px 4px 13px;
+  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px
+}
+nav button .ic{font-size:19px;line-height:1}
+nav button.on{color:var(--amarelo)}
+
+/* cartoes */
+.card{
+  background:var(--carvao);border:1px solid var(--borda);border-radius:var(--raio);
+  padding:16px;margin-bottom:12px
+}
+.card.claro{background:var(--carvao2)}
+.tit{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--cinza);margin-bottom:10px}
+
+/* barras de progresso */
+.trilho{height:7px;background:#242424;border-radius:99px;overflow:hidden}
+.trilho i{display:block;height:100%;border-radius:99px;transition:width .45s ease}
+.b-visto i{background:var(--azul)}
+.b-aprendido i{background:var(--amarelo)}
+.b-consolidado i{background:var(--verde)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--cinza);margin-top:10px}
+.leg b{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+.metricas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.met{background:var(--carvao2);border:1px solid var(--borda);border-radius:10px;padding:11px 10px;text-align:center}
+.met .n{font-size:22px;font-weight:900;line-height:1.1}
+.met .l{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--cinza);margin-top:3px}
+
+/* lista de disciplinas */
+.disc{border:1px solid var(--borda);border-radius:12px;padding:13px;margin-bottom:9px;background:var(--carvao)}
+.disc .lin1{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.disc .nome{font-weight:800;font-size:14px;flex:1}
+.disc .peso{font-size:10px;font-weight:700;color:var(--cinza);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
+.disc .barras{display:flex;flex-direction:column;gap:5px}
+.disc .lb{display:flex;align-items:center;gap:8px}
+.disc .lb span{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--cinza);width:82px;flex-shrink:0}
+.disc .lb .trilho{flex:1}
+.disc .lb em{font-style:normal;font-size:10.5px;font-weight:800;width:34px;text-align:right;color:var(--creme2)}
+.disc .acoes{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.selo{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:3px 7px;border-radius:5px}
+.selo.ok{background:rgba(126,224,138,.15);color:var(--verde)}
+.selo.trava{background:rgba(255,122,107,.15);color:var(--vermelho)}
+
+/* botoes */
+.bt{
+  border:1px solid var(--borda);background:var(--carvao2);color:var(--creme);
+  border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.4px
+}
+.bt:active{transform:translateY(1px)}
+.bt.p{background:var(--amarelo);color:var(--preto);border-color:var(--amarelo)}
+.bt.g{width:100%;padding:13px;font-size:13px}
+.bt:disabled{opacity:.4;cursor:not-allowed}
+
+/* aula */
+.aula h2{font-size:19px;margin:0 0 4px}
+.secao{border-left:3px solid var(--borda);padding:2px 0 2px 14px;margin:18px 0}
+.secao.alto{border-left-color:var(--amarelo)}
+.secao h3{font-size:15px;margin-bottom:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tagp{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:2px 6px;border-radius:4px;background:#242424;color:var(--cinza)}
+.tagp.alto{background:var(--amarelo);color:var(--preto)}
+.secao p{margin:0 0 9px;color:#ded9cd}
+.secao ul{margin:0 0 9px;padding-left:17px;color:#ded9cd}
+.secao li{margin-bottom:5px}
+.dest{background:rgba(248,255,136,.09);border:1px solid rgba(248,255,136,.25);border-radius:10px;padding:11px 13px;margin:11px 0;font-size:13.5px}
+.dest b{color:var(--amarelo)}
+.arm{background:rgba(255,122,107,.08);border:1px solid rgba(255,122,107,.22);border-radius:10px;padding:11px 13px;margin:11px 0;font-size:13.5px}
+.arm .t{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--vermelho);margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th{background:var(--carvao2);text-align:left;padding:7px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--creme2);border-bottom:1px solid var(--borda)}
+td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-align:top}
+.tabwrap{overflow-x:auto}
+
+/* flashcard */
+.fc{
+  background:var(--carvao);border:1px solid var(--borda);border-radius:18px;
+  padding:24px 18px;min-height:230px;display:flex;flex-direction:column;
+  justify-content:center;text-align:center;margin-bottom:12px
+}
+.fc .perg{font-size:18px;font-weight:700;line-height:1.4}
+.fc .resp{margin-top:16px;padding-top:16px;border-top:1px dashed var(--borda);font-size:15px;color:#ded9cd;text-align:left;line-height:1.6}
+.notas{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.notas button{border:none;border-radius:10px;padding:12px 4px;font-size:11px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
+.n0{background:rgba(255,122,107,.18);color:var(--vermelho)}
+.n3{background:rgba(248,255,136,.13);color:var(--amarelo)}
+.n4{background:rgba(138,180,255,.15);color:var(--azul)}
+.n5{background:rgba(126,224,138,.15);color:var(--verde)}
+.notas small{display:block;font-size:9px;font-weight:600;opacity:.7;text-transform:none;letter-spacing:0}
+
+/* simulado */
+.q{margin-bottom:8px}
+.q .en{font-size:15px;font-weight:600;line-height:1.5;margin-bottom:14px}
+.alt{
+  display:block;width:100%;text-align:left;background:var(--carvao2);border:1px solid var(--borda);
+  color:var(--creme);border-radius:10px;padding:12px 13px;margin-bottom:8px;font-size:14px;cursor:pointer;line-height:1.45
+}
+.alt .letra{font-weight:900;color:var(--cinza);margin-right:8px}
+.alt.sel{border-color:var(--amarelo);background:rgba(248,255,136,.08)}
+.alt.certa{border-color:var(--verde);background:rgba(126,224,138,.1)}
+.alt.errada{border-color:var(--vermelho);background:rgba(255,122,107,.1)}
+.expl{background:var(--carvao2);border-left:3px solid var(--amarelo);border-radius:0 10px 10px 0;padding:11px 13px;font-size:13.5px;color:#ded9cd;margin-top:4px}
+.contador{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--cinza);margin-bottom:12px}
+.placar{font-size:52px;font-weight:900;line-height:1;text-align:center;margin:6px 0}
+.placar small{display:block;font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--cinza);margin-top:7px;text-transform:uppercase}
+
+.vazio{text-align:center;color:var(--cinza);padding:34px 16px;font-size:14px}
+.oculto{display:none!important}
+.aviso{background:rgba(255,122,107,.1);border:1px solid rgba(255,122,107,.3);border-radius:10px;padding:11px 13px;font-size:12.5px;margin-bottom:12px}
+.mini{font-size:11.5px;color:var(--cinza);line-height:1.5}
+.linha-erro{border-bottom:1px solid var(--borda);padding:9px 0;font-size:13px}
+.linha-erro .d{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--cinza);font-weight:700}
+@media(min-width:640px){
+  body{font-size:15.5px}
+  .wrap{padding:20px 18px 0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topo">
+    <div>
+      <div class="marca">Sistema <span>Corretor</span></div>
+      <div class="sub" id="subTopo">Habilitação de Corretor de Seguros</div>
+    </div>
+    <div class="dir">
+      <button class="pill" id="btn8020" title="Mostrar só o conteúdo de peso alto">80/20</button>
+      <button class="pill" id="btnBackup">⤓</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" id="tela"></div>
+
+<nav><div class="nwrap">
+  <button data-t="painel" class="on"><span class="ic">◧</span>Painel</button>
+  <button data-t="aulas"><span class="ic">▤</span>Aulas</button>
+  <button data-t="cards"><span class="ic">◈</span>Cards</button>
+  <button data-t="simulado"><span class="ic">◎</span>Simulado</button>
+</div></nav>
+
+<!-- ================= CONTEUDO ================= -->
+<script src="conteudo/00-indice.js"></script>
+<script src="conteudo/01-teoria-geral.js"></script>
+<script src="conteudo/02-direito-legislacao.js"></script>
+
+<script>
+/* =========================================================
+   ESTADO
+   ========================================================= */
+const CHAVE='sistemaCorretor.v1';
+const HOJE=()=>{const d=new Date();return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000)};
+let S=carregar();
+let modo8020=false, tela='painel', ctx={};
+
+function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now()}}
+function carregar(){
+  try{const r=localStorage.getItem(CHAVE);return r?Object.assign(vazio(),JSON.parse(r)):vazio()}
+  catch(e){return vazio()}
+}
+function salvar(){
+  try{localStorage.setItem(CHAVE,JSON.stringify(S))}
+  catch(e){console.warn('Sem persistência local',e)}
+}
+function temStorage(){try{localStorage.setItem('_t','1');localStorage.removeItem('_t');return true}catch(e){return false}}
+
+/* =========================================================
+   HELPERS DE CONTEUDO
+   ========================================================= */
+const D=()=>INDICE.disciplinas.map(d=>Object.assign({},d,CONTEUDO[d.id]||{}));
+function disc(id){return D().find(d=>d.id===id)}
+function temConteudo(d){return !!(CONTEUDO[d.id])}
+function pesoOk(p){return !modo8020 || p==='alto'}
+function aulasDe(d){return (d.aulas||[]).filter(a=>pesoOk(a.peso))}
+function cardsDe(d){return (d.flashcards||[]).filter(c=>pesoOk(c.peso))}
+function questoesDe(d){return (d.simulado||[]).filter(q=>pesoOk(q.peso))}
+
+/* progresso: visto / aprendido / consolidado */
+function progresso(d){
+  const as=(d.aulas||[]);
+  const visto = as.length? as.filter(a=>S.aulas[d.id+':'+a.id]).length/as.length : 0;
+
+  const sims=S.simulados.filter(s=>s.disciplina===d.id);
+  const melhor = sims.length? Math.max(...sims.map(s=>s.acertos/s.total)) : 0;
+  const aprendido = Math.min(1, melhor/0.7);
+
+  const cs=(d.flashcards||[]);
+  const maduros = cs.filter(c=>{const e=S.cards[d.id+':'+c.id];return e&&e.intervalo>=21}).length;
+  const consolidado = cs.length? maduros/cs.length : 0;
+
+  return {visto,aprendido,consolidado,melhorSim:melhor,temSim:sims.length>0};
+}
+function vencidos(d){
+  const h=HOJE();
+  return (d.flashcards||[]).filter(c=>{const e=S.cards[d.id+':'+c.id];return e&&e.prox<=h});
+}
+function novos(d){
+  return (d.flashcards||[]).filter(c=>!S.cards[d.id+':'+c.id]);
+}
+function pct(x){return Math.round(x*100)}
+
+/* =========================================================
+   SM-2
+   ========================================================= */
+function revisar(chave,q){
+  let e=S.cards[chave]||{ef:2.5,intervalo:0,reps:0,prox:HOJE(),lapsos:0};
+  if(q<3){ e.reps=0; e.intervalo=0; e.lapsos=(e.lapsos||0)+1; e.prox=HOJE(); }
+  else{
+    e.reps++;
+    e.intervalo = e.reps===1?1 : e.reps===2?6 : Math.round(e.intervalo*e.ef);
+    e.prox = HOJE()+e.intervalo;
+  }
+  e.ef = Math.max(1.3, e.ef + (0.1-(5-q)*(0.08+(5-q)*0.02)));
+  e.ultima=q; e.quando=Date.now();
+  S.cards[chave]=e; salvar();
+  return e;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+const el=document.getElementById('tela');
+function ir(t,c){tela=t;ctx=c||{};document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);render()}
+function render(){
+  if(tela==='painel')return painel();
+  if(tela==='aulas')return ctx.disciplina?aula():listaAulas();
+  if(tela==='cards')return ctx.disciplina?sessaoCards():listaCards();
+  if(tela==='simulado')return ctx.rodando?simulado():ctx.resultado?resultado():listaSimulado();
+}
+function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+
+/* -------- PAINEL -------- */
+function painel(){
+  const ds=D(), prontos=ds.filter(temConteudo);
+  let visto=0,apr=0,cons=0,peso=0, cardsHoje=0, cardsNovos=0;
+  prontos.forEach(d=>{
+    const p=progresso(d);
+    visto+=p.visto*d.questoes; apr+=p.aprendido*d.questoes; cons+=p.consolidado*d.questoes; peso+=d.questoes;
+    cardsHoje+=vencidos(d).length; cardsNovos+=novos(d).length;
+  });
+  const tot=INDICE.disciplinas.reduce((a,b)=>a+b.questoes,0);
+  const cobertura=peso/tot;
+
+  let h='';
+  if(!temStorage()) h+=`<div class="aviso"><b>Atenção:</b> o navegador não está guardando dados nesta pasta. Use o botão ⤓ para exportar o progresso antes de fechar.</div>`;
+
+  h+=`<div class="card">
+    <div class="tit">Onde você está</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      ${barra('Visto','b-visto',peso?visto/peso:0)}
+      ${barra('Aprendido','b-aprendido',peso?apr/peso:0)}
+      ${barra('Consolidado','b-consolidado',peso?cons/peso:0)}
+    </div>
+    <div class="leg">
+      <span><b style="background:var(--azul)"></b>Visto: aula lida</span>
+      <span><b style="background:var(--amarelo)"></b>Aprendido: simulado ≥ 70%</span>
+      <span><b style="background:var(--verde)"></b>Consolidado: card com 21+ dias</span>
+    </div>
+    <div class="mini" style="margin-top:11px">Medido sobre as ${peso} questões das disciplinas já carregadas no sistema, que são ${pct(cobertura)}% das ${tot} questões da prova inteira.</div>
+  </div>`;
+
+  h+=`<div class="metricas">
+    <div class="met"><div class="n" style="color:${cardsHoje?'var(--amarelo)':'var(--cinza)'}">${cardsHoje}</div><div class="l">Cards hoje</div></div>
+    <div class="met"><div class="n">${cardsNovos}</div><div class="l">Cards novos</div></div>
+    <div class="met"><div class="n">${S.erros.length}</div><div class="l">Lista de erro</div></div>
+  </div>`;
+
+  h+=`<div class="card" style="margin-top:12px"><div class="tit">Próxima ação</div>${proximaAcao(prontos,cardsHoje)}</div>`;
+
+  h+=`<div class="tit" style="margin:22px 0 10px">As 20 disciplinas</div>`;
+  let etapaAtual=0;
+  ds.forEach(d=>{
+    if(d.etapa!==etapaAtual){etapaAtual=d.etapa;
+      const e=INDICE.etapas.find(x=>x.n===d.etapa);
+      h+=`<div style="margin:16px 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--amarelo)">Etapa ${e.n} · ${esc(e.nome)}</div>`;
+    }
+    h+=cartaoDisciplina(d);
+  });
+
+  if(S.erros.length){
+    h+=`<div class="card" style="margin-top:18px"><div class="tit">Lista de erro (o único material da reta final)</div>`;
+    S.erros.slice(-12).reverse().forEach(e=>{
+      h+=`<div class="linha-erro"><div class="d">${esc(e.disciplinaNome)}</div>${esc(e.resumo)}</div>`;
+    });
+    h+=`<button class="bt g" style="margin-top:12px" onclick="limparErros()">Limpar lista de erro</button></div>`;
+  }
+  el.innerHTML=h;
+}
+function barra(nome,cls,v){
+  return `<div class="lb" style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--cinza);width:92px">${nome}</span>
+    <div class="trilho ${cls}" style="flex:1"><i style="width:${pct(v)}%"></i></div>
+    <em style="font-style:normal;font-weight:900;font-size:12px;width:38px;text-align:right">${pct(v)}%</em>
+  </div>`;
+}
+function cartaoDisciplina(d){
+  const pronto=temConteudo(d);
+  const p=pronto?progresso(d):{visto:0,aprendido:0,consolidado:0,temSim:false,melhorSim:0};
+  const venc=pronto?vencidos(d).length:0;
+  let selo='';
+  if(pronto&&p.visto>=1&&p.melhorSim>=0.7&&p.consolidado>=0.8) selo='<span class="selo ok">Dominada</span>';
+  else if(pronto&&p.temSim&&p.melhorSim<0.7) selo='<span class="selo trava">Abaixo de 70%</span>';
+  return `<div class="disc">
+    <div class="lin1">
+      <div class="nome">${esc(d.nome)}${selo}</div>
+      <div class="peso">${d.questoes} q · ${d.dia}º dia</div>
+    </div>
+    ${pronto?`<div class="barras">
+      <div class="lb"><span>Visto</span><div class="trilho b-visto"><i style="width:${pct(p.visto)}%"></i></div><em>${pct(p.visto)}%</em></div>
+      <div class="lb"><span>Aprendido</span><div class="trilho b-aprendido"><i style="width:${pct(p.aprendido)}%"></i></div><em>${pct(p.aprendido)}%</em></div>
+      <div class="lb"><span>Consolidado</span><div class="trilho b-consolidado"><i style="width:${pct(p.consolidado)}%"></i></div><em>${pct(p.consolidado)}%</em></div>
+    </div>
+    <div class="acoes">
+      <button class="bt" onclick="ir('aulas',{disciplina:'${d.id}'})">Aula</button>
+      <button class="bt ${venc?'p':''}" onclick="ir('cards',{disciplina:'${d.id}'})">Cards${venc?' ('+venc+')':''}</button>
+      <button class="bt" onclick="iniciarSimulado('${d.id}')">Simulado</button>
+    </div>`
+    :`<div class="mini">Conteúdo ainda não carregado. Entra numa próxima leva.</div>`}
+  </div>`;
+}
+function proximaAcao(prontos,cardsHoje){
+  if(cardsHoje) return `<p style="margin:0 0 11px">Você tem <b style="color:var(--amarelo)">${cardsHoje} cards vencidos</b>. Revisão vencida é a tarefa de maior retorno do dia, porque cada dia de atraso derruba a retenção.</p><button class="bt p g" onclick="ir('cards',{})">Revisar agora</button>`;
+  const semVer=prontos.find(d=>progresso(d).visto<1);
+  if(semVer) return `<p style="margin:0 0 11px">Nenhum card vencido. O passo é continuar a aula de <b>${esc(semVer.nome)}</b>.</p><button class="bt p g" onclick="ir('aulas',{disciplina:'${semVer.id}'})">Abrir a aula</button>`;
+  const semSim=prontos.find(d=>!progresso(d).temSim);
+  if(semSim) return `<p style="margin:0 0 11px">Aulas em dia. Falta medir: rode o simulado de <b>${esc(semSim.nome)}</b>.</p><button class="bt p g" onclick="iniciarSimulado('${semSim.id}')">Rodar simulado</button>`;
+  const novosD=prontos.find(d=>novos(d).length);
+  if(novosD) return `<p style="margin:0 0 11px">Tudo em dia. Dá pra puxar cards novos de <b>${esc(novosD.nome)}</b>.</p><button class="bt p g" onclick="ir('cards',{disciplina:'${novosD.id}'})">Puxar novos</button>`;
+  return `<p style="margin:0">Nada vencido, nada pendente. Dia limpo.</p>`;
+}
+function limparErros(){if(confirm('Limpar a lista de erro?')){S.erros=[];salvar();render()}}
+
+/* -------- AULAS -------- */
+function listaAulas(){
+  let h=`<div class="tit">Aulas disponíveis</div>`;
+  D().filter(temConteudo).forEach(d=>{
+    const p=progresso(d);
+    h+=`<div class="disc"><div class="lin1"><div class="nome">${esc(d.nome)}</div><div class="peso">${pct(p.visto)}% visto</div></div>
+    <button class="bt g" onclick="ir('aulas',{disciplina:'${d.id}'})">Abrir</button></div>`;
+  });
+  el.innerHTML=h;
+}
+function aula(){
+  const d=disc(ctx.disciplina), as=aulasDe(d);
+  let h=`<button class="bt" onclick="ir('painel')">← Painel</button>
+  <div class="aula" style="margin-top:14px"><h2>${esc(d.nome)}</h2>
+  <div class="mini" style="margin-bottom:6px">${d.questoes} questões · ${d.dia}º dia · ${esc(d.modalidade)}</div>`;
+  if(d.abertura) h+=`<div class="dest">${d.abertura}</div>`;
+  as.forEach(a=>{
+    const vis=!!S.aulas[d.id+':'+a.id];
+    h+=`<div class="secao ${a.peso==='alto'?'alto':''}">
+      <h3>${esc(a.titulo)} <span class="tagp ${a.peso==='alto'?'alto':''}">${a.peso}</span></h3>`;
+    (a.blocos||[]).forEach(b=>{
+      if(b.t==='p')h+=`<p>${b.x}</p>`;
+      else if(b.t==='l')h+=`<ul>${b.x.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+      else if(b.t==='d')h+=`<div class="dest">${b.x}</div>`;
+      else if(b.t==='a')h+=`<div class="arm"><div class="t">Armadilha da prova</div>${b.x}</div>`;
+      else if(b.t==='tab')h+=`<div class="tabwrap"><table><thead><tr>${b.head.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    });
+    h+=`<button class="bt ${vis?'':'p'}" onclick="marcarVisto('${d.id}','${a.id}')">${vis?'✓ Visto':'Marcar como visto'}</button></div>`;
+  });
+  h+=`<div class="card" style="margin-top:22px"><div class="tit">Terminou a leitura</div>
+  <p class="mini" style="margin-bottom:12px">O ciclo só fecha com card e questão. Ler de novo é o passo que menos rende.</p>
+  <button class="bt p g" style="margin-bottom:8px" onclick="ir('cards',{disciplina:'${d.id}'})">Ir para os flashcards</button>
+  <button class="bt g" onclick="iniciarSimulado('${d.id}')">Rodar o simulado</button></div></div>`;
+  el.innerHTML=h;
+}
+function marcarVisto(did,aid){
+  const k=did+':'+aid;
+  if(S.aulas[k])delete S.aulas[k]; else S.aulas[k]={em:Date.now()};
+  salvar();render();
+}
+
+/* -------- FLASHCARDS -------- */
+let fila=[],atual=null,mostrando=false,sessao={certos:0,total:0};
+function listaCards(){
+  const ds=D().filter(temConteudo);
+  let h=`<div class="tit">Revisão de hoje</div>`;
+  const todos=[];ds.forEach(d=>vencidos(d).forEach(c=>todos.push({d,c})));
+  h+=`<div class="card"><p style="margin:0 0 12px">${todos.length?`<b style="color:var(--amarelo);font-size:20px">${todos.length}</b> cards vencidos, de todas as disciplinas.`:'Nenhum card vencido hoje.'}</p>
+  ${todos.length?`<button class="bt p g" onclick="abrirCards(null)">Revisar tudo</button>`:''}</div>`;
+  h+=`<div class="tit" style="margin-top:20px">Por disciplina</div>`;
+  ds.forEach(d=>{
+    const v=vencidos(d).length,n=novos(d).length,p=progresso(d);
+    h+=`<div class="disc"><div class="lin1"><div class="nome">${esc(d.nome)}</div><div class="peso">${pct(p.consolidado)}% consolidado</div></div>
+    <div class="mini" style="margin-bottom:10px">${v} vencidos · ${n} novos · ${(d.flashcards||[]).length} no total</div>
+    <button class="bt g ${v?'p':''}" onclick="abrirCards('${d.id}')">Estudar</button></div>`;
+  });
+  el.innerHTML=h;
+}
+function abrirCards(did){ctx={disciplina:did||'__todas'};montarFila();tela='cards';document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==='cards'));window.scrollTo(0,0);render()}
+function montarFila(){
+  const ds=ctx.disciplina==='__todas'?D().filter(temConteudo):[disc(ctx.disciplina)];
+  const venc=[],nov=[];
+  ds.forEach(d=>{
+    vencidos(d).forEach(c=>{if(pesoOk(c.peso))venc.push({d,c})});
+    novos(d).forEach(c=>{if(pesoOk(c.peso))nov.push({d,c})});
+  });
+  nov.sort((a,b)=>({alto:0,medio:1,baixo:2})[a.c.peso]-({alto:0,medio:1,baixo:2})[b.c.peso]);
+  fila=venc.concat(nov.slice(0,15));
+  sessao={certos:0,total:0};mostrando=false;atual=fila.shift()||null;
+}
+function sessaoCards(){
+  if(!fila.length&&!atual){
+    el.innerHTML=`<button class="bt" onclick="ir('cards',{})">← Cards</button>
+    <div class="card" style="margin-top:14px;text-align:center">
+      <div class="placar">${sessao.total?Math.round(sessao.certos/sessao.total*100):0}%<small>${sessao.certos} de ${sessao.total} sem tropeço</small></div>
+      <p class="mini">Sessão encerrada. Os cards que você errou voltam ainda hoje, os que acertou voltam no intervalo que o sistema calculou.</p>
+      <button class="bt p g" style="margin-top:12px" onclick="ir('painel')">Voltar ao painel</button>
+    </div>`;return;
+  }
+  const {d,c}=atual;const e=S.cards[d.id+':'+c.id];
+  const rest=fila.length+1;
+  let h=`<div class="contador"><span>${esc(d.nome)}</span><span>${rest} na fila${e?'':' · novo'}</span></div>
+  <div class="fc"><div class="perg">${c.p}</div>${mostrando?`<div class="resp">${c.r}</div>`:''}</div>`;
+  if(!mostrando){
+    h+=`<button class="bt p g" onclick="virar()">Mostrar resposta</button>
+    <p class="mini" style="text-align:center;margin-top:11px">Responda em voz alta antes de virar. Ler a resposta sem tentar não fixa nada.</p>`;
+  }else{
+    h+=`<div class="notas">
+      <button class="n0" onclick="nota(0)">Errei<small>volta hoje</small></button>
+      <button class="n3" onclick="nota(3)">Difícil<small>volta cedo</small></button>
+      <button class="n4" onclick="nota(4)">Bom<small>intervalo normal</small></button>
+      <button class="n5" onclick="nota(5)">Fácil<small>intervalo longo</small></button>
+    </div>`;
+  }
+  el.innerHTML=h;
+}
+function virar(){mostrando=true;render()}
+function nota(q){
+  const {d,c}=atual;
+  const e=revisar(d.id+':'+c.id,q);
+  sessao.total++; if(q>=3)sessao.certos++;
+  if(q<3) fila.push(atual);
+  mostrando=false; atual=fila.shift()||null; render();
+}
+
+/* -------- SIMULADO -------- */
+let sim=null;
+function listaSimulado(){
+  let h=`<div class="card"><div class="tit">Como o simulado conta</div>
+  <p class="mini" style="margin:0">Aprovação real exige <b style="color:var(--creme)">70% na modalidade e nenhuma disciplina zerada</b>. Aqui a régua é a mesma: abaixo de 70% a disciplina não vira "aprendida" no painel.</p></div>
+  <div class="tit" style="margin-top:20px">Escolha a disciplina</div>`;
+  D().filter(temConteudo).forEach(d=>{
+    const sims=S.simulados.filter(s=>s.disciplina===d.id);
+    const melhor=sims.length?Math.max(...sims.map(s=>s.acertos/s.total)):null;
+    h+=`<div class="disc"><div class="lin1"><div class="nome">${esc(d.nome)}</div>
+    <div class="peso">${melhor===null?'nunca rodado':'melhor '+pct(melhor)+'%'}</div></div>
+    <div class="mini" style="margin-bottom:10px">${questoesDe(d).length} questões disponíveis${sims.length?' · '+sims.length+' tentativa(s)':''}</div>
+    <button class="bt g ${melhor===null||melhor<0.7?'p':''}" onclick="iniciarSimulado('${d.id}')">Iniciar</button></div>`;
+  });
+  el.innerHTML=h;
+}
+function iniciarSimulado(did){
+  const d=disc(did);const qs=questoesDe(d).slice();
+  if(!qs.length){alert('Sem questões nesta disciplina com o filtro atual.');return}
+  for(let i=qs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[qs[i],qs[j]]=[qs[j],qs[i]]}
+  sim={d,qs,i:0,respostas:[],inicio:Date.now()};
+  ctx={rodando:true};tela='simulado';
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==='simulado'));
+  window.scrollTo(0,0);render();
+}
+function simulado(){
+  const q=sim.qs[sim.i];const resp=sim.respostas[sim.i];
+  const letras=['A','B','C','D','E'];
+  let h=`<div class="contador"><span>${esc(sim.d.nome)}</span><span>Questão ${sim.i+1} de ${sim.qs.length}</span></div>
+  <div class="trilho b-aprendido" style="margin-bottom:16px"><i style="width:${(sim.i)/sim.qs.length*100}%"></i></div>
+  <div class="q"><div class="en">${q.enunciado}</div>`;
+  q.alts.forEach((a,k)=>{
+    let cls='alt';
+    if(resp!==undefined){
+      if(k===q.correta)cls+=' certa';
+      else if(k===resp)cls+=' errada';
+    }
+    h+=`<button class="${cls}" ${resp!==undefined?'disabled':''} onclick="responder(${k})"><span class="letra">${letras[k]}</span>${a}</button>`;
+  });
+  h+=`</div>`;
+  if(resp!==undefined){
+    h+=`<div class="expl"><b style="color:${resp===q.correta?'var(--verde)':'var(--vermelho)'}">${resp===q.correta?'Certo.':'Errado.'}</b> ${q.explicacao}</div>
+    <button class="bt p g" style="margin-top:14px" onclick="proxima()">${sim.i+1<sim.qs.length?'Próxima questão':'Ver resultado'}</button>`;
+  }
+  el.innerHTML=h;
+}
+function responder(k){
+  if(sim.respostas[sim.i]!==undefined)return;
+  sim.respostas[sim.i]=k;render();
+}
+function proxima(){
+  if(sim.i+1<sim.qs.length){sim.i++;window.scrollTo(0,0);render()}
+  else finalizar();
+}
+function finalizar(){
+  const acertos=sim.respostas.filter((r,i)=>r===sim.qs[i].correta).length;
+  S.simulados.push({disciplina:sim.d.id,nome:sim.d.nome,acertos,total:sim.qs.length,quando:Date.now(),
+    minutos:Math.round((Date.now()-sim.inicio)/60000)});
+  sim.qs.forEach((q,i)=>{
+    if(sim.respostas[i]!==q.correta){
+      S.erros.push({disciplina:sim.d.id,disciplinaNome:sim.d.nome,resumo:q.erro||q.enunciado.replace(/<[^>]+>/g,'').slice(0,150),quando:Date.now()});
+    }
+  });
+  if(S.erros.length>80)S.erros=S.erros.slice(-80);
+  salvar();
+  ctx={resultado:{acertos,total:sim.qs.length}};render();window.scrollTo(0,0);
+}
+function resultado(){
+  const {acertos,total}=ctx.resultado;const p=acertos/total;
+  const cor=p>=0.7?'var(--verde)':p>=0.5?'var(--amarelo)':'var(--vermelho)';
+  const errosAgora=sim.qs.map((q,i)=>({q,r:sim.respostas[i]})).filter(x=>x.r!==x.q.correta);
+  let h=`<div class="card" style="text-align:center">
+    <div class="placar" style="color:${cor}">${pct(p)}%<small>${acertos} de ${total} · ${esc(sim.d.nome)}</small></div>
+    <p class="mini" style="margin:0">${p>=0.7?'Acima da régua de aprovação. A disciplina conta como aprendida no painel.':p===0?'Zerou. Numa prova real, zerar uma disciplina reprova mesmo com boa média nas outras.':'Abaixo dos 70%. Volte aos cards antes de repetir o simulado.'}</p>
+  </div>`;
+  if(errosAgora.length){
+    h+=`<div class="tit" style="margin-top:20px">O que caiu na lista de erro</div><div class="card">`;
+    errosAgora.forEach(x=>{h+=`<div class="linha-erro">${x.q.enunciado.replace(/<[^>]+>/g,'').slice(0,170)}<div class="mini" style="margin-top:5px;color:var(--creme2)">${x.q.explicacao}</div></div>`});
+    h+=`</div>`;
+  }
+  h+=`<button class="bt p g" style="margin-top:14px" onclick="iniciarSimulado('${sim.d.id}')">Repetir</button>
+  <button class="bt g" style="margin-top:8px" onclick="ir('painel')">Voltar ao painel</button>`;
+  el.innerHTML=h;
+}
+
+/* -------- BACKUP -------- */
+function backup(){
+  const nome='progresso-corretor-'+new Date().toISOString().slice(0,10)+'.json';
+  const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nome;a.click();
+}
+function restaurar(f){
+  const r=new FileReader();
+  r.onload=()=>{try{S=Object.assign(vazio(),JSON.parse(r.result));salvar();render();alert('Progresso restaurado.')}catch(e){alert('Arquivo inválido.')}};
+  r.readAsText(f);
+}
+
+/* -------- EVENTOS -------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>ir(b.dataset.t,{}));
+document.getElementById('btn8020').onclick=function(){
+  modo8020=!modo8020;this.classList.toggle('on',modo8020);
+  document.getElementById('subTopo').textContent=modo8020?'Modo 80/20: só o peso alto':'Habilitação de Corretor de Seguros';
+  if(tela==='cards'&&ctx.disciplina)montarFila();
+  render();
+};
+document.getElementById('btnBackup').onclick=function(){
+  const q=confirm('OK para EXPORTAR o progresso.\nCancelar para IMPORTAR um arquivo salvo.');
+  if(q)backup();
+  else{const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>restaurar(e.target.files[0]);i.click()}
+};
+render();
+</script>
+</body>
+</html>
