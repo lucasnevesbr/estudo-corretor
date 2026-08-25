@@ -114,8 +114,13 @@ Para adicionar uma disciplina: criar o arquivo em `conteudo/` e incluir a tag `<
 
 ## Conteúdo carregado
 
-Etapa 1 completa: Teoria Geral do Seguro e Direito e Legislação do Seguro.
-São 20 das 200 questões da prova, 10%.
+| Etapa | Disciplina | Aulas | Cards | Questões | Peso na prova |
+|---|---|---|---|---|---|
+| 1 | Teoria Geral do Seguro | 9 | 35 | 15 | 10 q |
+| 1 | Direito e Legislação do Seguro | 8 | 33 | 15 | 10 q |
+| 2 | Matemática Financeira | 9 | 35 | 15 | 10 q |
+
+São 30 das 200 questões da prova, 15%. Faltam 17 disciplinas.
 
 ## Fonte
 
