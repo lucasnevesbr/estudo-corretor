@@ -62,6 +62,33 @@ A trilha é opinativa de propósito. Se precisar furar a fila, a aba **Painel** 
   reprova quem zera qualquer matéria, então largar a cauda não é opção. Cada aula, card e questão
   tem peso alto, médio ou baixo, e o 80/20 mostra só o alto.
 
+## Instale na tela de início
+
+No iPhone: Safari, botão de compartilhar, **Adicionar à Tela de Início**.
+No Android: Chrome, menu de três pontos, **Instalar app**.
+
+Não é só conforto. O Safari apaga o `localStorage` de site comum depois de **7 dias sem uso**, e o
+app instalado na tela de início escapa dessa regra. Como a trilha dura 24 semanas e o SM-2 guarda o
+calendário de revisão de cada card, perder o armazenamento é perder o estudo, não só a tela.
+
+## Onde mora o progresso, e quem alcança ele
+
+| Pergunta | Resposta |
+|---|---|
+| Outra pessoa vê meu progresso? | Não. Ele fica no `localStorage` do seu aparelho e nunca sai dele. Quem abre o link recebe um app zerado. |
+| Outra pessoa altera meu progresso? | Não. Não existe servidor nem banco compartilhado. |
+| Outra pessoa altera o código? | Não. Repositório público é leitura para todos, escrita só para o dono. |
+| O que é público então? | O código e o conteúdo de estudo. Texto original, nada sigiloso. |
+
+**Por isso este app não tem tela de login, e não deve ter.** GitHub Pages serve arquivo estático, sem
+servidor: qualquer senha teria que viajar dentro do JavaScript, visível no código-fonte. E qualquer
+arquivo do repositório é baixável por qualquer pessoa, `.env` inclusive. Segredo de verdade exige
+servidor, e servidor aqui significa VPS, não Pages.
+
+O único risco real é **você** perder o progresso: limpar os dados do navegador, trocar de aparelho
+ou desinstalar. Por isso o botão `⤓` exporta e importa JSON, e o app cobra backup depois de 7 dias
+sem salvar.
+
 ## Como roda
 
 Estático puro. Sem servidor, sem banco, sem build. O progresso fica no `localStorage` do navegador,

@@ -7,6 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+<!-- Instalavel na tela de inicio. No iPhone isso nao e enfeite: o Safari apaga o
+     localStorage de site comum depois de 7 dias sem uso, e o app instalado escapa disso. -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icone-192.png" type="image/png">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Corretor">
 <style>
 :root{
   --preto:#0a0a0a;
@@ -378,7 +389,7 @@ function semanaHoje(){
 }
 function diasAteProva(){return diaDe(PROVA)-HOJE()}
 
-function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now()}}
+function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now(),ultimoBackup:0,escondeuInstalar:0}}
 function carregar(){
   try{const r=localStorage.getItem(CHAVE);return r?Object.assign(vazio(),JSON.parse(r)):vazio()}
   catch(e){return vazio()}
@@ -516,6 +527,8 @@ function trilha(){
 
   let h='';
   if(!temStorage()) h+=`<div class="aviso"><b>Atenção:</b> o navegador não está guardando dados nesta pasta. Use o botão ⤓ para exportar o progresso antes de fechar.</div>`;
+  h+=avisoBackup();
+  h+=avisoInstalar();
 
   /* faixa de status */
   const emDia=atrasoSem<=0;
@@ -656,6 +669,8 @@ function painel(){
 
   let h='';
   if(!temStorage()) h+=`<div class="aviso"><b>Atenção:</b> o navegador não está guardando dados nesta pasta. Use o botão ⤓ para exportar o progresso antes de fechar.</div>`;
+  h+=avisoBackup();
+  h+=avisoInstalar();
 
   h+=`<div class="card">
     <div class="tit">Onde você está</div>
@@ -935,14 +950,60 @@ function resultado(){
 
 /* -------- BACKUP -------- */
 function backup(){
+  /* carimba ANTES de serializar, senao o arquivo salvo carrega a data do backup anterior
+     e, ao ser restaurado, ja nasce cobrando backup de novo */
+  S.ultimoBackup=HOJE(); salvar();
   const nome='progresso-corretor-'+new Date().toISOString().slice(0,10)+'.json';
   const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nome;a.click();
+  render();
 }
 function restaurar(f){
   const r=new FileReader();
   r.onload=()=>{try{S=Object.assign(vazio(),JSON.parse(r.result));salvar();render();alert('Progresso restaurado.')}catch(e){alert('Arquivo inválido.')}};
   r.readAsText(f);
+}
+/* Quanto trabalho existe pra perder. Se e zero, nao tem por que cobrar backup. */
+function temProgresso(){
+  return Object.keys(S.aulas).length || Object.keys(S.cards).length || S.simulados.length;
+}
+function diasSemBackup(){
+  if(!temProgresso()) return null;
+  if(!S.ultimoBackup) return Infinity;
+  return HOJE()-S.ultimoBackup;
+}
+/* Aviso de backup vencido. Aparece na Trilha e no Painel. */
+function avisoBackup(){
+  const d=diasSemBackup();
+  if(d===null || d<7) return '';
+  const nunca=(d===Infinity);
+  return `<div class="aviso">
+    <b>${nunca?'Seu progresso nunca foi salvo fora do navegador.':'Faz '+d+' dias que você não salva o progresso.'}</b>
+    Ele vive só neste aparelho. Limpar os dados do navegador ou trocar de celular apaga tudo,
+    inclusive o calendário de revisão dos cards.
+    <button class="bt g" style="margin-top:9px" onclick="backup()">Salvar o progresso agora</button>
+  </div>`;
+}
+/* Convite pra instalar. E a maior protecao no iPhone e some depois de instalado. */
+function avisoInstalar(){
+  if(INSTALADO || S.escondeuInstalar) return '';
+  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+  const como = iOS
+    ? 'No Safari: botão de compartilhar, depois <b>Adicionar à Tela de Início</b>.'
+    : 'No Chrome: menu de três pontos, depois <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.';
+  return `<div class="aviso" style="background:rgba(138,180,255,.09);border-color:rgba(138,180,255,.3)">
+    <b>Instale na tela de início.</b> ${como}
+    ${iOS?'O Safari apaga o armazenamento de site comum depois de 7 dias sem uso, e o app instalado escapa dessa regra.':'Abre sem barra de navegador e o progresso fica mais protegido.'}
+    <button class="bt g" style="margin-top:9px" onclick="S.escondeuInstalar=1;salvar();render()">Já entendi, esconder</button>
+  </div>`;
+}
+/* Rodando como app instalado na tela de inicio? Ai o iPhone nao apaga o armazenamento. */
+const INSTALADO = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+
+/* Pede pro navegador nao despejar o armazenamento. Chrome e Firefox atendem;
+   no Safari nao existe e a promessa simplesmente nao resolve nada. */
+if(navigator.storage && navigator.storage.persist){
+  navigator.storage.persisted().then(ok=>{ if(!ok) navigator.storage.persist().catch(()=>{}) }).catch(()=>{});
 }
 
 /* -------- EVENTOS -------- */
