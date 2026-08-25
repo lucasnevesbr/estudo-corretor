@@ -58,10 +58,10 @@ nav{
   background:rgba(10,10,10,.97);border-top:1px solid var(--borda);
   backdrop-filter:blur(10px);padding-bottom:env(safe-area-inset-bottom)
 }
-nav .nwrap{max-width:820px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav .nwrap{max-width:820px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav button{
-  background:none;border:none;color:var(--cinza);padding:11px 4px 13px;
-  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  background:none;border:none;color:var(--cinza);padding:11px 2px 13px;
+  font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
   cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px
 }
 nav button .ic{font-size:19px;line-height:1}
@@ -172,9 +172,150 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 .mini{font-size:11.5px;color:var(--cinza);line-height:1.5}
 .linha-erro{border-bottom:1px solid var(--borda);padding:9px 0;font-size:13px}
 .linha-erro .d{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--cinza);font-weight:700}
+/* ================= TRILHA ================= */
+.trilha{padding-bottom:20px}
+
+/* cabecalho da etapa */
+.etapa-cab{
+  background:var(--carvao);border:1px solid var(--borda);border-radius:var(--raio);
+  padding:13px 15px;margin:26px 0 4px;display:flex;align-items:center;gap:12px
+}
+.etapa-cab:first-child{margin-top:6px}
+.etapa-cab.viva{background:var(--amarelo);border-color:var(--amarelo);color:var(--preto)}
+.etapa-cab .n{
+  font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;
+  color:var(--cinza);margin-bottom:2px
+}
+.etapa-cab.viva .n{color:rgba(10,10,10,.62)}
+.etapa-cab .nm{font-size:15px;font-weight:900;letter-spacing:-.3px;line-height:1.15}
+.etapa-cab .cont{
+  margin-left:auto;font-size:10.5px;font-weight:800;white-space:nowrap;
+  color:var(--cinza);text-transform:uppercase;letter-spacing:.5px
+}
+.etapa-cab.viva .cont{color:rgba(10,10,10,.7)}
+
+/* o caminho */
+.passo{position:relative;display:flex;flex-direction:column;align-items:center;padding:9px 0}
+.passo .fio{
+  position:absolute;top:0;bottom:0;left:50%;width:4px;margin-left:-2px;
+  background:var(--borda);border-radius:99px;z-index:0
+}
+.passo.feito .fio{background:rgba(248,255,136,.32)}
+.passo:first-of-type .fio{top:50%}
+.passo:last-of-type .fio{bottom:50%}
+
+.no{
+  position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:7px;
+  transform:translateX(calc(var(--off,0px) * var(--esc,1)))
+}
+/* em tela muito estreita o caminho serpenteia menos, pra nao vazar */
+@media(max-width:359px){:root{--esc:.55}.rot{max-width:170px}}
+
+.bolha{
+  width:66px;height:66px;border-radius:50%;border:none;cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;position:relative;
+  font-size:23px;font-weight:900;color:var(--cinza);
+  background:var(--carvao2);box-shadow:0 4px 0 var(--borda);
+  transition:transform .12s ease,box-shadow .12s ease
+}
+.bolha:active{transform:translateY(4px);box-shadow:0 0 0 var(--borda)}
+
+.bolha.feita{background:var(--amarelo);color:var(--preto);box-shadow:0 4px 0 #b9c04f}
+.bolha.atual{
+  background:var(--amarelo);color:var(--preto);box-shadow:0 4px 0 #b9c04f;
+  width:78px;height:78px;font-size:27px
+}
+.bolha.travada{background:var(--carvao2);color:#3a382f;box-shadow:0 4px 0 #1e1e1e;cursor:default}
+.bolha.vazia{
+  background:transparent;color:#3a382f;box-shadow:none;
+  border:2px dashed var(--borda);cursor:default
+}
+.bolha.prova{
+  width:86px;height:86px;font-size:32px;background:var(--creme);color:var(--preto);
+  box-shadow:0 5px 0 #9c9788
+}
+
+/* anel de progresso do no atual */
+.anel{position:absolute;inset:-9px;border-radius:50%;pointer-events:none}
+.anel svg{width:100%;height:100%;transform:rotate(-90deg);display:block}
+.anel circle{fill:none;stroke-width:4;stroke-linecap:round}
+.anel .base{stroke:var(--borda)}
+.anel .frente{stroke:var(--verde);transition:stroke-dashoffset .5s ease}
+
+/* pulso do no atual */
+.pulso{
+  position:absolute;inset:-9px;border-radius:50%;border:2px solid var(--amarelo);
+  opacity:0;animation:bater 2.1s ease-out infinite;pointer-events:none
+}
+@keyframes bater{
+  0%{transform:scale(1);opacity:.55}
+  70%{transform:scale(1.32);opacity:0}
+  100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){.pulso{animation:none;opacity:0}}
+
+/* balao COMECAR */
+.balao{
+  background:var(--amarelo);color:var(--preto);border:none;cursor:pointer;
+  font-family:inherit;font-size:11px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.9px;padding:9px 16px;border-radius:11px;position:relative;
+  box-shadow:0 4px 0 #b9c04f;margin-bottom:4px
+}
+.balao:active{transform:translateY(4px);box-shadow:0 0 0 #b9c04f}
+.balao::after{
+  content:'';position:absolute;bottom:-7px;left:50%;margin-left:-7px;
+  border:7px solid transparent;border-top-color:var(--amarelo);border-bottom:0
+}
+
+/* rotulo sob a bolha */
+.rot{text-align:center;max-width:210px}
+.rot .nm{font-size:12.5px;font-weight:800;line-height:1.25}
+.passo.travado .rot .nm{color:var(--cinza)}
+.rot .me{
+  font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--cinza);margin-top:3px
+}
+.rot .me b{color:var(--creme2);font-weight:800}
+.rot .me .atraso{color:var(--vermelho)}
+.rot .me .adiant{color:var(--verde)}
+
+/* marcador do dia de hoje */
+.hoje{
+  position:relative;z-index:1;display:flex;align-items:center;gap:9px;
+  width:100%;max-width:340px;margin:4px auto;padding:0 4px
+}
+.hoje .risco{flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--vermelho) 0 6px,transparent 6px 11px)}
+.hoje .txt{
+  font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--vermelho);white-space:nowrap
+}
+
+/* faixa de status no topo da trilha */
+.status{
+  background:var(--carvao);border:1px solid var(--borda);border-radius:var(--raio);
+  padding:14px 15px;margin-bottom:6px
+}
+.status .l1{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.status .sem{font-size:26px;font-weight:900;line-height:1;letter-spacing:-.6px}
+.status .de{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--cinza)}
+.status .tag{
+  margin-left:auto;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;
+  padding:4px 9px;border-radius:6px
+}
+.status .tag.ok{background:rgba(126,224,138,.15);color:var(--verde)}
+.status .tag.ruim{background:rgba(255,122,107,.15);color:var(--vermelho)}
+.status .cd{
+  margin-top:11px;padding-top:11px;border-top:1px solid var(--borda);
+  display:flex;align-items:center;gap:10px
+}
+.status .cd .dias{font-size:22px;font-weight:900;line-height:1;color:var(--amarelo)}
+.status .cd .txt{font-size:11px;font-weight:700;color:var(--cinza);line-height:1.35}
+
 @media(min-width:640px){
   body{font-size:15.5px}
   .wrap{padding:20px 18px 0}
+  .bolha{width:74px;height:74px;font-size:26px}
+  .bolha.atual{width:86px;height:86px;font-size:30px}
 }
 </style>
 </head>
@@ -196,7 +337,8 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 <div class="wrap" id="tela"></div>
 
 <nav><div class="nwrap">
-  <button data-t="painel" class="on"><span class="ic">◧</span>Painel</button>
+  <button data-t="trilha" class="on"><span class="ic">◉</span>Trilha</button>
+  <button data-t="painel"><span class="ic">◧</span>Painel</button>
   <button data-t="aulas"><span class="ic">▤</span>Aulas</button>
   <button data-t="cards"><span class="ic">◈</span>Cards</button>
   <button data-t="simulado"><span class="ic">◎</span>Simulado</button>
@@ -214,7 +356,27 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 const CHAVE='sistemaCorretor.v1';
 const HOJE=()=>{const d=new Date();return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000)};
 let S=carregar();
-let modo8020=false, tela='painel', ctx={};
+let modo8020=false, tela='trilha', ctx={};
+
+/* =========================================================
+   CALENDARIO DA TRILHA
+   Semana 1 comeca na segunda 24/08/2026. Uma disciplina por
+   semana, na ordem do INDICE. Depois das 20 vem a reta final
+   (4 semanas) e a prova em 08/02/2027.
+   ========================================================= */
+const INICIO=new Date(2026,7,24);            /* 24/08/2026, uma segunda */
+const PROVA=new Date(2027,1,8);              /* 08/02/2027 */
+const SEM_RETA=4;
+function diaDe(dt){return Math.floor(new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()).getTime()/86400000)}
+function semanaDaDisciplina(i){return i+1}
+function inicioDaSemana(n){const d=new Date(INICIO);d.setDate(d.getDate()+(n-1)*7);return d}
+function ddmm(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')}
+/* em que semana da trilha estamos hoje (pode passar de 24) */
+function semanaHoje(){
+  const dif=HOJE()-diaDe(INICIO);
+  return dif<0?0:Math.floor(dif/7)+1;
+}
+function diasAteProva(){return diaDe(PROVA)-HOJE()}
 
 function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now()}}
 function carregar(){
@@ -285,12 +447,200 @@ function revisar(chave,q){
 const el=document.getElementById('tela');
 function ir(t,c){tela=t;ctx=c||{};document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);render()}
 function render(){
+  if(tela==='trilha')return trilha();
   if(tela==='painel')return painel();
   if(tela==='aulas')return ctx.disciplina?aula():listaAulas();
   if(tela==='cards')return ctx.disciplina?sessaoCards():listaCards();
   if(tela==='simulado')return ctx.rodando?simulado():ctx.resultado?resultado():listaSimulado();
 }
 function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+
+/* =========================================================
+   TRILHA
+   Um no por disciplina, na ordem de aprender. O no so abre
+   quando o anterior esta concluido, e clicar nele nao pergunta
+   nada: vai direto pro proximo passo que falta.
+   Concluido = todas as aulas lidas E simulado >= 70%.
+   O Consolidado nao trava a trilha, porque card leva 21 dias
+   pra amadurecer e travaria 3 semanas no primeiro no.
+   ========================================================= */
+const OFF=[0,40,62,40,0,-40,-62,-40];
+
+function concluida(d){
+  if(!temConteudo(d)) return false;
+  const p=progresso(d);
+  return p.visto>=1 && p.melhorSim>=0.7;
+}
+function dominada(d){
+  return concluida(d) && progresso(d).consolidado>=0.8;
+}
+/* quanto falta pra fechar o no, de 0 a 1 */
+function fechamento(d){
+  if(!temConteudo(d)) return 0;
+  const p=progresso(d);
+  return Math.min(1, p.visto*0.5 + Math.min(1,p.melhorSim/0.7)*0.5);
+}
+/* o proximo passo daquela disciplina, sem perguntar nada */
+function proximoPasso(d){
+  const p=progresso(d);
+  if(p.visto<1) return {acao:'aula', rot:'Ler a aula'};
+  if(novos(d).length) return {acao:'cards', rot:'Fixar os cards'};
+  if(p.melhorSim<0.7) return {acao:'simulado', rot:p.temSim?'Refazer o simulado':'Rodar o simulado'};
+  return {acao:'cards', rot:'Revisar os cards'};
+}
+function abrirNo(did){
+  const d=disc(did); if(!d||!temConteudo(d)) return;
+  const s=proximoPasso(d);
+  if(s.acao==='aula') return ir('aulas',{disciplina:did});
+  if(s.acao==='simulado') return iniciarSimulado(did);
+  return abrirCards(did);
+}
+function noTravado(nome){
+  alert('Ainda não. Feche "'+nome+'" primeiro: todas as aulas lidas e simulado de 70% pra cima.\n\nSe quiser furar a fila mesmo assim, o Painel abre tudo.');
+}
+function noVazio(){
+  alert('Esta disciplina ainda não tem conteúdo carregado. Entra numa próxima leva.');
+}
+
+function trilha(){
+  const ds=D(), prontos=ds.filter(temConteudo);
+  let cardsHoje=0; prontos.forEach(d=>cardsHoje+=vencidos(d).length);
+
+  /* qual e o no atual: o primeiro que nao esta concluido */
+  let iAtual=ds.findIndex(d=>!concluida(d));
+  if(iAtual<0) iAtual=ds.length;
+
+  const semHoje=semanaHoje();
+  const semAtual=iAtual+1;
+  const atrasoSem=semHoje-semAtual;
+
+  let h='';
+  if(!temStorage()) h+=`<div class="aviso"><b>Atenção:</b> o navegador não está guardando dados nesta pasta. Use o botão ⤓ para exportar o progresso antes de fechar.</div>`;
+
+  /* faixa de status */
+  const emDia=atrasoSem<=0;
+  h+=`<div class="status">
+    <div class="l1">
+      <div>
+        <div class="sem">Semana ${semHoje>24?24:(semHoje||1)}</div>
+        <div class="de">de 24 · rumo a 08/02/2027</div>
+      </div>
+      <span class="tag ${emDia?'ok':'ruim'}">${emDia?'Em dia':'Atrasado '+atrasoSem+(atrasoSem>1?' semanas':' semana')}</span>
+    </div>
+    <div class="cd">
+      <div class="dias">${diasAteProva()}</div>
+      <div class="txt">dias até o 1º dia de prova.<br>Inscrição fecha por volta de 22/01/2027.</div>
+    </div>
+  </div>`;
+
+  /* o que vence hoje vem antes da trilha, porque atravessa todas as disciplinas */
+  if(cardsHoje){
+    h+=`<div class="card" style="border-color:rgba(248,255,136,.35)">
+      <div class="tit" style="color:var(--amarelo)">Antes de avançar</div>
+      <p style="margin:0 0 11px">Você tem <b style="color:var(--amarelo)">${cardsHoje} cards vencidos</b> de disciplinas que já passaram. Revisão vencida rende mais que matéria nova.</p>
+      <button class="bt p g" onclick="abrirCards('__todas')">Revisar os ${cardsHoje} agora</button>
+    </div>`;
+  }
+
+  /* o caminho */
+  h+='<div class="trilha">';
+  let etapaAtual=0, marcouHoje=false;
+
+  ds.forEach((d,i)=>{
+    /* cabecalho da etapa */
+    if(d.etapa!==etapaAtual){
+      etapaAtual=d.etapa;
+      const e=INDICE.etapas.find(x=>x.n===d.etapa);
+      const naEtapa=ds.filter(x=>x.etapa===d.etapa);
+      const feitosNaEtapa=naEtapa.filter(concluida).length;
+      const viva=(i<=iAtual && iAtual<i+naEtapa.length);
+      h+=`<div class="etapa-cab ${viva?'viva':''}">
+        <div>
+          <div class="n">Etapa ${e.n}</div>
+          <div class="nm">${esc(e.nome)}</div>
+        </div>
+        <div class="cont">${feitosNaEtapa}/${naEtapa.length}</div>
+      </div>`;
+    }
+
+    const sem=semanaDaDisciplina(i);
+
+    /* marcador de hoje, antes do no da semana corrente */
+    if(!marcouHoje && sem===semHoje){
+      marcouHoje=true;
+      h+=`<div class="hoje"><div class="risco"></div><div class="txt">Hoje · ${ddmm(new Date())}</div><div class="risco"></div></div>`;
+    }
+
+    const temC=temConteudo(d);
+    const feito=concluida(d);
+    const ehAtual=(i===iAtual);
+    const dom=dominada(d);
+
+    let cls, ico, clique;
+    if(feito){ cls='feita'; ico=dom?'★':'✓'; clique=`abrirNo('${d.id}')`; }
+    else if(ehAtual && temC){ cls='atual'; ico='▶'; clique=`abrirNo('${d.id}')`; }
+    else if(!temC){ cls='vazia'; ico='·'; clique='noVazio()'; }
+    else { cls='travada'; ico='🔒'; clique=`noTravado(${JSON.stringify(ds[iAtual]?ds[iAtual].nome:'a anterior').replace(/"/g,'&quot;')})`; }
+
+    const off=OFF[i%OFF.length];
+    const passoCls=(feito?'feito ':'')+((!feito&&!ehAtual)?'travado':'');
+
+    /* anel de progresso, so no no atual */
+    let anel='';
+    if(ehAtual && temC){
+      const f=fechamento(d), C=282.74;
+      anel=`<div class="anel"><svg viewBox="0 0 100 100">
+        <circle class="base" cx="50" cy="50" r="45"></circle>
+        <circle class="frente" cx="50" cy="50" r="45" stroke-dasharray="${C}" stroke-dashoffset="${(C*(1-f)).toFixed(1)}"></circle>
+      </svg></div>`;
+    }
+
+    /* rotulo com a semana e o desvio do calendario */
+    let meta=`Sem ${sem} · ${ddmm(inicioDaSemana(sem))} · ${d.questoes} q`;
+    if(ehAtual && temC){
+      const s=proximoPasso(d);
+      meta=`<b>${s.rot}</b> · ${d.questoes} q · ${d.dia}º dia`;
+    } else if(feito){
+      meta=`${dom?'Dominada':'Concluída'} · ${d.questoes} q · ${d.dia}º dia`;
+    }
+
+    h+=`<div class="passo ${passoCls}">
+      <div class="no" style="--off:${off}px">
+        ${ehAtual&&temC?`<button class="balao" onclick="abrirNo('${d.id}')">${fechamento(d)>0?'Continuar':'Começar'}</button>`:''}
+        <div style="position:relative">
+          ${anel}
+          ${ehAtual&&temC?'<div class="pulso"></div>':''}
+          <button class="bolha ${cls}" onclick="${clique}" aria-label="${esc(d.nome)}">${ico}</button>
+        </div>
+        <div class="rot">
+          <div class="nm">${esc(d.nome)}</div>
+          <div class="me">${meta}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  /* reta final e prova */
+  const semRetaIni=ds.length+1;
+  h+=`<div class="etapa-cab ${semHoje>=semRetaIni?'viva':''}">
+    <div><div class="n">Etapa 9</div><div class="nm">Reta final</div></div>
+    <div class="cont">${SEM_RETA} semanas</div>
+  </div>`;
+  h+=`<div class="passo travado"><div class="no">
+    <div style="position:relative"><button class="bolha vazia" onclick="noVazio()">·</button></div>
+    <div class="rot"><div class="nm">Lista de erro e simulados gerais</div>
+    <div class="me">Sem ${semRetaIni} a ${semRetaIni+SEM_RETA-1} · ${ddmm(inicioDaSemana(semRetaIni))} a 07/02</div></div>
+  </div></div>`;
+
+  h+=`<div class="passo"><div class="no">
+    <div style="position:relative"><button class="bolha prova" onclick="alert('83º EHCS, 1ª edição 2027.\\n\\nProvas: 08 a 11 de fevereiro de 2027, das 18h às 19h, online.\\nModalidade: Todos os Ramos, 200 questões em 4 dias.\\n\\n70% por bloco, sem zerar nenhuma disciplina.')">▲</button></div>
+    <div class="rot"><div class="nm">EXAME · Todos os Ramos</div>
+    <div class="me"><b>08 a 11/02/2027</b> · 200 questões</div></div>
+  </div></div>`;
+  h+='</div>';
+
+  el.innerHTML=h;
+}
 
 /* -------- PAINEL -------- */
 function painel(){

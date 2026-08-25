@@ -23,6 +23,30 @@ sem zerar nenhuma disciplina**. Não existe compensação entre blocos.
 | Vida e Previdência | 2º | 50 | 35 |
 | Seguros de Danos | 3º e 4º | 100 | 70 |
 
+## A trilha
+
+A tela inicial é uma trilha no estilo Duolingo: um nó por disciplina, na ordem de **aprender**,
+não na ordem da prova. O nó atual é o único destacado, e clicar nele não pergunta nada, vai direto
+para o passo que falta (ler a aula, fixar os cards ou rodar o simulado).
+
+**Um nó fecha quando:** todas as aulas lidas **e** melhor simulado de 70% para cima.
+O Consolidado não tranca a trilha, porque um flashcard leva no mínimo 21 dias para amadurecer e
+travaria três semanas no primeiro nó. Ele vira estrela no nó já concluído.
+
+| Estado | Como aparece |
+|---|---|
+| Atual | amarelo, maior, com anel de progresso e o balão Começar ou Continuar |
+| Concluída | amarelo com ✓ |
+| Dominada | amarelo com ★ (concluída mais Consolidado de 80% para cima) |
+| Travada | cinza com 🔒, explica o que falta ao clicar |
+| Sem conteúdo | contorno tracejado |
+
+O topo mostra a semana da trilha, se você está em dia ou atrasado, e os dias que faltam para a prova.
+Os cards vencidos aparecem **antes** da trilha, porque atravessam todas as disciplinas: revisão
+vencida rende mais que matéria nova.
+
+A trilha é opinativa de propósito. Se precisar furar a fila, a aba **Painel** abre tudo.
+
 ## As três réguas de progresso
 
 - **Visto:** percentual de aulas marcadas como lidas.
