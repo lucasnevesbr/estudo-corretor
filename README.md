@@ -98,6 +98,28 @@ com exportar e importar JSON no botão `⤓`.
 python -m http.server 8899 --directory .
 ```
 
+## Antes de publicar qualquer mudanca de conteudo
+
+```bash
+python verificar.py
+```
+
+**O progresso e gravado por ID, nunca por texto:**
+
+```
+S.aulas["teoria-geral:a1"]     aula lida
+S.cards["teoria-geral:c12"]    agenda SM-2 daquele card
+```
+
+Consequencia pratica: **o texto pode mudar a vontade, o id nao.** Reescrever uma aula inteira
+preserva o progresso. Trocar `c12` por `c13` orfana o card, que volta a aparecer como novo e perde
+a agenda de revisao. Adicionar uma disciplina nova nunca afeta as existentes, porque cria chaves
+novas.
+
+O `verificar.py` confere isso: chave do objeto batendo com o indice, ids unicos e no padrao,
+nenhuma chave de objeto acentuada, pesos validos, tipos de bloco conhecidos e `<script>` presente
+no `index.html`.
+
 ## Estrutura
 
 ```
