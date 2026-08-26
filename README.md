@@ -47,6 +47,19 @@ vencida rende mais que matéria nova.
 
 A trilha é opinativa de propósito. Se precisar furar a fila, a aba **Painel** abre tudo.
 
+## O cartão Hoje
+
+Abre a trilha e responde uma pergunta só: **o que fazer agora, e isso fecha a semana?**
+
+- **Dia da semana e fita de 7 dias**, com os dias em que você estudou marcados e o de hoje em destaque.
+- **Sequência de dias seguidos.** Conta a partir de ontem quando você ainda não estudou hoje, senão
+  zeraria toda manhã antes do primeiro card.
+- **As tarefas em ordem de retorno:** cards vencidos primeiro (atravessam todas as disciplinas),
+  depois leitura, depois cards novos, e o simulado fechando a semana.
+- **O ritmo calculado, não fixo.** Não existe "uma aula por dia": a disciplina tem N aulas e sobram
+  X dias até domingo, então o alvo de hoje é N dividido por X, recalculado toda vez que você abre.
+  Ler 3 num dia e 0 no outro dá no mesmo, desde que domingo chegue zerado.
+
 ## As três réguas de progresso
 
 - **Visto:** percentual de aulas marcadas como lidas.

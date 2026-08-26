@@ -322,6 +322,44 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 .status .cd .dias{font-size:22px;font-weight:900;line-height:1;color:var(--amarelo)}
 .status .cd .txt{font-size:11px;font-weight:700;color:var(--cinza);line-height:1.35}
 
+/* cartao HOJE: o que fazer agora, e se o ritmo fecha a semana */
+.plano{background:var(--carvao);border:1px solid var(--borda);border-radius:var(--raio);padding:14px;margin-bottom:12px}
+.plano .cab{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px}
+.plano .dia1{font-size:19px;font-weight:900;letter-spacing:-.4px}
+.plano .disc1{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--cinza)}
+.plano .seq{margin-left:auto;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:3px 8px;border-radius:6px;background:rgba(248,255,136,.13);color:var(--amarelo);white-space:nowrap}
+.plano .seq.fria{background:#242424;color:var(--cinza)}
+
+/* fita dos 7 dias da semana */
+.semana7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:12px 0 14px}
+.d7{text-align:center;padding:6px 0 5px;border-radius:8px;background:var(--carvao2);border:1px solid var(--borda)}
+.d7 .l{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--cinza)}
+.d7 .n{font-size:13px;font-weight:900;margin-top:2px;color:var(--creme2)}
+.d7.ativo{background:rgba(126,224,138,.13);border-color:rgba(126,224,138,.3)}
+.d7.ativo .n{color:var(--verde)}
+.d7.hj{border-color:var(--amarelo);background:rgba(248,255,136,.1)}
+.d7.hj .l,.d7.hj .n{color:var(--amarelo)}
+.d7.passou{opacity:.45}
+
+/* as tarefas do dia */
+.tarefa{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--borda)}
+.tarefa:first-of-type{border-top:none;padding-top:2px}
+.tarefa .mk{width:19px;height:19px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;
+  align-items:center;justify-content:center;font-size:11px;font-weight:900}
+.tarefa.feita .mk{background:var(--verde);color:var(--preto)}
+.tarefa.agora .mk{background:var(--amarelo);color:var(--preto)}
+.tarefa.depois .mk{background:#242424;color:var(--cinza);border:1px solid var(--borda)}
+.tarefa .tx{flex:1;font-size:13.5px;line-height:1.45}
+.tarefa.feita .tx,.tarefa.depois .tx{color:var(--cinza)}
+.tarefa .quanto{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--cinza);white-space:nowrap;margin-top:2px}
+.plano .veredito{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:12.5px;line-height:1.5;
+  background:rgba(248,255,136,.09);border:1px solid rgba(248,255,136,.22)}
+.plano .veredito.ruim{background:rgba(255,122,107,.09);border-color:rgba(255,122,107,.25)}
+.plano .veredito b{color:var(--amarelo)}
+.plano .veredito.ruim b{color:var(--vermelho)}
+
 @media(min-width:640px){
   body{font-size:15.5px}
   .wrap{padding:20px 18px 0}
@@ -390,7 +428,23 @@ function semanaHoje(){
 }
 function diasAteProva(){return diaDe(PROVA)-HOJE()}
 
-function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now(),ultimoBackup:0,escondeuInstalar:0}}
+function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now(),ultimoBackup:0,escondeuInstalar:0,diasAtivos:[]}}
+/* Registra que HOUVE estudo hoje. Chamado ao marcar aula, revisar card e fechar simulado.
+   Guarda o numero do dia (dias desde a epoca), nao a data, pra comparar sem fuso. */
+function marcarAtividade(){
+  if(!Array.isArray(S.diasAtivos)) S.diasAtivos=[];
+  const h=HOJE();
+  if(!S.diasAtivos.includes(h)){ S.diasAtivos.push(h); if(S.diasAtivos.length>400) S.diasAtivos.shift(); }
+}
+/* Dias seguidos de estudo. Conta pra tras a partir de hoje; se ainda nao estudou hoje,
+   comeca de ontem, senao a sequencia zeraria toda manha antes do primeiro card. */
+function sequencia(){
+  const dias=new Set(S.diasAtivos||[]);
+  let n=0, d=HOJE();
+  if(!dias.has(d)) d--;
+  while(dias.has(d)){ n++; d--; }
+  return n;
+}
 function carregar(){
   try{const r=localStorage.getItem(CHAVE);return r?Object.assign(vazio(),JSON.parse(r)):vazio()}
   catch(e){return vazio()}
@@ -449,7 +503,7 @@ function revisar(chave,q){
   }
   e.ef = Math.max(1.3, e.ef + (0.1-(5-q)*(0.08+(5-q)*0.02)));
   e.ultima=q; e.quando=Date.now();
-  S.cards[chave]=e; salvar();
+  S.cards[chave]=e; marcarAtividade(); salvar();
   return e;
 }
 
@@ -514,6 +568,147 @@ function noVazio(){
   alert('Esta disciplina ainda não tem conteúdo carregado. Entra numa próxima leva.');
 }
 
+/* =========================================================
+   O PLANO DE HOJE
+   A pergunta que isso responde: "preciso acabar uma licao por dia?"
+   Resposta: nao ha regra fixa. A disciplina da semana tem N aulas e
+   sobram X dias ate domingo, entao o ritmo e N/X, recalculado todo dia.
+   Ler 3 num dia e 0 no outro fecha igual; o que nao pode e chegar no
+   domingo com aula sobrando, porque a proxima semana ja tem dona.
+   ========================================================= */
+const NOMES_DIA=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const LETRA_DIA=['S','T','Q','Q','S','S','D'];   /* segunda a domingo */
+
+function planoDeHoje(){
+  const ds=D();
+  let i=ds.findIndex(d=>!concluida(d));
+  if(i<0) return {acabou:true};
+  const d=ds[i];
+  const semDisc=i+1;                                  /* semana planejada desta disciplina */
+  const iniSem=diaDe(inicioDaSemana(semDisc));
+  const fimSem=iniSem+6;                              /* domingo */
+  const hoje=HOJE();
+
+  /* dias que ainda dao pra usar, contando hoje */
+  let restam=fimSem-hoje+1;
+  const atrasado=restam<=0;
+  if(atrasado){                                       /* passou do prazo: usa a semana corrente */
+    const fimAtual=diaDe(inicioDaSemana(semanaHoje()))+6;
+    restam=Math.max(1, fimAtual-hoje+1);
+  }
+
+  const pronto=temConteudo(d);
+  const p=pronto?progresso(d):{visto:0,melhorSim:0,temSim:false};
+  const totalAulas=pronto?(d.aulas||[]).length:0;
+  const lidas=pronto?(d.aulas||[]).filter(a=>S.aulas[d.id+':'+a.id]).length:0;
+  const faltamAulas=Math.max(0,totalAulas-lidas);
+
+  let vencHoje=0; ds.filter(temConteudo).forEach(x=>vencHoje+=vencidos(x).length);
+  const novosDisc=pronto?novos(d).length:0;
+  const simOk=p.melhorSim>=0.7;
+
+  return {
+    acabou:false, atrasado, disciplina:d, pronto, semDisc, iniSem, fimSem, restam,
+    totalAulas, lidas, faltamAulas,
+    aulasHoje: faltamAulas? Math.ceil(faltamAulas/restam) : 0,
+    vencHoje, novosDisc, simOk, temSim:p.temSim, melhorSim:p.melhorSim
+  };
+}
+
+function fitaDaSemana(pl){
+  let h='<div class="semana7">';
+  const ativos=new Set(S.diasAtivos||[]);
+  for(let k=0;k<7;k++){
+    const dia=pl.iniSem+k;
+    const cls=[ dia===HOJE()?'hj':'', ativos.has(dia)?'ativo':'', dia<HOJE()&&!ativos.has(dia)?'passou':'' ]
+      .filter(Boolean).join(' ');
+    const dt=new Date((dia)*86400000);
+    h+=`<div class="d7 ${cls}"><div class="l">${LETRA_DIA[k]}</div><div class="n">${ativos.has(dia)?'✓':dt.getUTCDate()}</div></div>`;
+  }
+  return h+'</div>';
+}
+
+function tarefa(estado,texto,quanto,acao){
+  const mk=estado==='feita'?'✓':(estado==='agora'?'●':'○');
+  const clique=acao?` onclick="${acao}" style="cursor:pointer"`:'';
+  return `<div class="tarefa ${estado}"${clique}>
+    <div class="mk">${mk}</div><div class="tx">${texto}</div>
+    ${quanto?`<div class="quanto">${quanto}</div>`:''}
+  </div>`;
+}
+
+function cartaoHoje(){
+  const pl=planoDeHoje();
+  const seq=sequencia();
+  if(pl.acabou) return `<div class="plano"><div class="cab"><div class="dia1">Trilha fechada</div></div>
+    <div class="veredito">As 20 disciplinas estão concluídas. O que resta é reta final: lista de erro, cards vencidos e simulados repetidos.</div></div>`;
+
+  const d=new Date();
+  const nomeHoje=NOMES_DIA[d.getDay()];
+  const diaNaSem=HOJE()-pl.iniSem+1;
+
+  let h=`<div class="plano">
+    <div class="cab">
+      <div class="dia1">${nomeHoje}</div>
+      <div class="disc1">Semana ${pl.semDisc} · ${esc(pl.disciplina.nome)}</div>
+      <div class="seq ${seq?'':'fria'}">${seq?seq+(seq>1?' dias seguidos':' dia'):'sem sequência'}</div>
+    </div>
+    ${fitaDaSemana(pl)}`;
+
+  if(!pl.pronto){
+    h+=`<div class="veredito ruim">Esta disciplina ainda não tem conteúdo carregado. Enquanto ela não entra, o melhor uso do dia é revisar os cards vencidos e repetir simulado das disciplinas anteriores.</div></div>`;
+    return h;
+  }
+
+  /* 1. revisao vencida vem sempre antes de materia nova */
+  h+=tarefa(pl.vencHoje?'agora':'feita',
+    pl.vencHoje?`Revisar os cards vencidos <b>de todas as disciplinas</b>`:`Revisão do dia em dia`,
+    pl.vencHoje?pl.vencHoje+' cards':'0 vencidos',
+    pl.vencHoje?`abrirCards('__todas')`:null);
+
+  /* 2. leitura, com o ritmo calculado */
+  if(pl.faltamAulas){
+    h+=tarefa(pl.vencHoje?'depois':'agora',
+      `Ler <b>${pl.aulasHoje} ${pl.aulasHoje>1?'aulas':'aula'}</b> de ${esc(pl.disciplina.nome)}`,
+      `${pl.lidas} de ${pl.totalAulas} lidas`,
+      `ir('aulas',{disciplina:'${pl.disciplina.id}'})`);
+  }else{
+    h+=tarefa('feita',`Todas as ${pl.totalAulas} aulas lidas`,'completo',null);
+  }
+
+  /* 3. cards novos: so depois de ler */
+  if(!pl.faltamAulas && pl.novosDisc){
+    h+=tarefa(pl.vencHoje?'depois':'agora',`Puxar os cards novos desta disciplina`,pl.novosDisc+' novos',
+      `abrirCards('${pl.disciplina.id}')`);
+  }
+
+  /* 4. simulado fecha a semana */
+  if(pl.simOk){
+    h+=tarefa('feita',`Simulado aprovado com ${Math.round(pl.melhorSim*100)}%`,'≥ 70%',null);
+  }else if(pl.faltamAulas){
+    h+=tarefa('depois',`Simulado, quando as aulas acabarem`,'no fim',null);
+  }else{
+    h+=tarefa('agora',
+      pl.temSim?`Refazer o simulado: o melhor foi <b>${Math.round(pl.melhorSim*100)}%</b>, abaixo dos 70%`
+               :`Rodar o simulado para fechar a semana`,
+      '15 questões', `iniciarSimulado('${pl.disciplina.id}')`);
+  }
+
+  /* o veredito: da pra fechar no prazo? */
+  const fim=new Date(pl.fimSem*86400000);
+  const qdo=String(fim.getUTCDate()).padStart(2,'0')+'/'+String(fim.getUTCMonth()+1).padStart(2,'0');
+  if(pl.atrasado){
+    h+=`<div class="veredito ruim"><b>Você passou do domingo desta disciplina.</b> Não tem drama: termine ${esc(pl.disciplina.nome)} nos próximos ${pl.restam} ${pl.restam>1?'dias':'dia'} e siga. Atrasar uma semana come a reta final lá na frente, atrasar três muda o alvo para a edição de julho.</div>`;
+  }else if(!pl.faltamAulas && pl.simOk){
+    h+=`<div class="veredito">Semana fechada antes do prazo. O melhor uso do tempo que sobrou é <b>card vencido</b>, não adiantar a próxima disciplina: a revisão é o que segura as 24 semanas.</div>`;
+  }else if(pl.faltamAulas){
+    h+=`<div class="veredito">Não é uma aula por dia. São <b>${pl.totalAulas} aulas em 7 dias</b>, e sobram <b>${pl.restam} ${pl.restam>1?'dias':'dia'}</b> até ${qdo}. Nesse ritmo, <b>${pl.aulasHoje} hoje</b> fecha no prazo. Ler 3 num dia e 0 no outro dá no mesmo, desde que domingo chegue zerado.</div>`;
+  }else{
+    h+=`<div class="veredito">Aulas lidas. Falta o simulado para o nó virar verde e destravar a próxima disciplina. Você tem até <b>${qdo}</b>.</div>`;
+  }
+  return h+'</div>';
+}
+
 function trilha(){
   const ds=D(), prontos=ds.filter(temConteudo);
   let cardsHoje=0; prontos.forEach(d=>cardsHoje+=vencidos(d).length);
@@ -547,14 +742,9 @@ function trilha(){
     </div>
   </div>`;
 
-  /* o que vence hoje vem antes da trilha, porque atravessa todas as disciplinas */
-  if(cardsHoje){
-    h+=`<div class="card" style="border-color:rgba(248,255,136,.35)">
-      <div class="tit" style="color:var(--amarelo)">Antes de avançar</div>
-      <p style="margin:0 0 11px">Você tem <b style="color:var(--amarelo)">${cardsHoje} cards vencidos</b> de disciplinas que já passaram. Revisão vencida rende mais que matéria nova.</p>
-      <button class="bt p g" onclick="abrirCards('__todas')">Revisar os ${cardsHoje} agora</button>
-    </div>`;
-  }
+  /* o plano do dia: substitui o antigo aviso de cards vencidos, que virou
+     a primeira tarefa da lista */
+  h+=cartaoHoje();
 
   /* o caminho */
   h+='<div class="trilha">';
@@ -796,7 +986,7 @@ function aula(){
 }
 function marcarVisto(did,aid){
   const k=did+':'+aid;
-  if(S.aulas[k])delete S.aulas[k]; else S.aulas[k]={em:Date.now()};
+  if(S.aulas[k])delete S.aulas[k]; else { S.aulas[k]={em:Date.now()}; marcarAtividade(); }
   salvar();render();
 }
 
@@ -922,6 +1112,7 @@ function finalizar(){
   const acertos=sim.respostas.filter((r,i)=>r===sim.qs[i].correta).length;
   S.simulados.push({disciplina:sim.d.id,nome:sim.d.nome,acertos,total:sim.qs.length,quando:Date.now(),
     minutos:Math.round((Date.now()-sim.inicio)/60000)});
+  marcarAtividade();
   sim.qs.forEach((q,i)=>{
     if(sim.respostas[i]!==q.correta){
       S.erros.push({disciplina:sim.d.id,disciplinaNome:sim.d.nome,resumo:q.erro||q.enunciado.replace(/<[^>]+>/g,'').slice(0,150),quando:Date.now()});
