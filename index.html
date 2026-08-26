@@ -1049,7 +1049,11 @@ function aula(){
   /* So pula se ja houver secao lida ACIMA pra pular. Com a disciplina zerada
      o certo e comecar do topo, senao ele perderia a abertura, que enquadra a materia. */
   if(alvo && lidas>0){
-    const topo=alvo.getBoundingClientRect().top+window.pageYOffset-84;  /* 74 do cabecalho fixo + folga */
+    /* mede o cabecalho em vez de chutar: ele muda de altura com a largura da tela,
+       e um valor fixo escondia o titulo atras dele no desktop */
+    const cab=document.querySelector('header');
+    const folga=(cab?cab.offsetHeight:74)+12;
+    const topo=alvo.getBoundingClientRect().top+window.pageYOffset-folga;
     if(topo>0) window.scrollTo(0,topo);
   }
 }
