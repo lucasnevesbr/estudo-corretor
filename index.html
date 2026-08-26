@@ -322,6 +322,24 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 .status .cd .dias{font-size:22px;font-weight:900;line-height:1;color:var(--amarelo)}
 .status .cd .txt{font-size:11px;font-weight:700;color:var(--cinza);line-height:1.35}
 
+/* leitura: secao ja lida encolhe pro titulo, pra nao ter que rolar por cima dela */
+.secao.lida{border-left-color:var(--verde);opacity:.62}
+.secao.lida h3{cursor:pointer;margin-bottom:0}
+.secao.lida .corpo{display:none}
+.selo-lida{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;
+  padding:2px 6px;border-radius:4px;background:rgba(126,224,138,.16);color:var(--verde);white-space:nowrap}
+.secao.lida h3::after{content:'toque para reler';font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--cinza);margin-left:2px}
+.secao.alvo{scroll-margin-top:72px}
+
+/* barra de leitura no topo da disciplina */
+.leitura{background:var(--carvao);border:1px solid var(--borda);border-radius:12px;padding:11px 13px;margin:12px 0 4px}
+.leitura .l1{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.leitura .n{font-size:14px;font-weight:900}
+.leitura .alvo{margin-left:auto;font-size:10.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--amarelo);white-space:nowrap}
+.leitura .alvo.ok{color:var(--verde)}
+
 /* cartao HOJE: o que fazer agora, e se o ritmo fecha a semana */
 .plano{background:var(--carvao);border:1px solid var(--borda);border-radius:var(--raio);padding:14px;margin-bottom:12px}
 .plano .cab{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:3px}
@@ -407,6 +425,9 @@ const CHAVE='sistemaCorretor.v1';
 const HOJE=()=>{const d=new Date();return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000)};
 let S=carregar();
 let modo8020=false, tela='trilha', ctx={};
+/* Secoes ja lidas que o usuario reabriu para reler. Vive so nesta visita:
+   trocar de tela ou de disciplina volta tudo a encolher. */
+let reabertas=new Set();
 
 /* =========================================================
    CALENDARIO DA TRILHA
@@ -511,7 +532,11 @@ function revisar(chave,q){
    RENDER
    ========================================================= */
 const el=document.getElementById('tela');
-function ir(t,c){tela=t;ctx=c||{};document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);render()}
+function ir(t,c){
+  /* trocar de tela ou de disciplina volta as secoes lidas a encolher */
+  if(!(t==='aulas' && c && c.disciplina===ctx.disciplina)) reabertas.clear();
+  tela=t;ctx=c||{};document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);render()
+}
 function render(){
   if(tela==='trilha')return trilha();
   if(tela==='painel')return painel();
@@ -959,16 +984,44 @@ function listaAulas(){
   });
   el.innerHTML=h;
 }
+function reabrir(aid){ reabertas.has(aid)?reabertas.delete(aid):reabertas.add(aid); render(); }
+
 function aula(){
   const d=disc(ctx.disciplina), as=aulasDe(d);
-  let h=`<button class="bt" onclick="ir('painel')">← Painel</button>
+  const lidas=as.filter(a=>S.aulas[d.id+':'+a.id]).length;
+  const pl=planoDeHoje();
+  /* alvo do dia so faz sentido se esta e a disciplina da vez */
+  const alvoHoje=(!pl.acabou && pl.pronto && pl.disciplina.id===d.id) ? pl.aulasHoje : 0;
+
+  let h=`<button class="bt" onclick="ir('trilha')">← Trilha</button>
   <div class="aula" style="margin-top:14px"><h2>${esc(d.nome)}</h2>
   <div class="mini" style="margin-bottom:6px">${d.questoes} questões · ${d.dia}º dia · ${esc(d.modalidade)}</div>`;
+
+  /* barra de leitura: onde parei e quanto falta hoje */
+  h+=`<div class="leitura">
+    <div class="l1">
+      <div class="n">${lidas} de ${as.length} lidas</div>
+      <div class="alvo ${alvoHoje?'':'ok'}">${
+        lidas>=as.length ? 'leitura completa'
+        : alvoHoje ? 'meta de hoje: '+alvoHoje
+        : 'no seu ritmo'}</div>
+    </div>
+    <div class="trilho b-visto"><i style="width:${as.length?Math.round(lidas/as.length*100):0}%"></i></div>
+  </div>`;
+
   if(d.abertura) h+=`<div class="dest">${d.abertura}</div>`;
+
+  let marcouAlvo=false;
   as.forEach(a=>{
     const vis=!!S.aulas[d.id+':'+a.id];
-    h+=`<div class="secao ${a.peso==='alto'?'alto':''}">
-      <h3>${esc(a.titulo)} <span class="tagp ${a.peso==='alto'?'alto':''}">${a.peso}</span></h3>`;
+    const encolhida=vis && !reabertas.has(a.id);
+    /* a primeira nao lida recebe o alvo do scroll */
+    const ehAlvo=!vis && !marcouAlvo; if(ehAlvo) marcouAlvo=true;
+    h+=`<div class="secao ${a.peso==='alto'?'alto':''} ${encolhida?'lida':''} ${ehAlvo?'alvo':''}"${ehAlvo?' id="proxima"':''}>
+      <h3${encolhida?` onclick="reabrir('${a.id}')"`:''}>${esc(a.titulo)}
+        <span class="tagp ${a.peso==='alto'?'alto':''}">${a.peso}</span>
+        ${vis?'<span class="selo-lida">✓ lida</span>':''}</h3>
+      <div class="corpo">`;
     (a.blocos||[]).forEach(b=>{
       if(b.t==='p')h+=`<p>${b.x}</p>`;
       else if(b.t==='l')h+=`<ul>${b.x.map(i=>`<li>${i}</li>`).join('')}</ul>`;
@@ -976,17 +1029,34 @@ function aula(){
       else if(b.t==='a')h+=`<div class="arm"><div class="t">Armadilha da prova</div>${b.x}</div>`;
       else if(b.t==='tab')h+=`<div class="tabwrap"><table><thead><tr>${b.head.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
     });
-    h+=`<button class="bt ${vis?'':'p'}" onclick="marcarVisto('${d.id}','${a.id}')">${vis?'✓ Visto':'Marcar como visto'}</button></div>`;
+    h+=`<button class="bt ${vis?'':'p'}" onclick="marcarVisto('${d.id}','${a.id}')">${vis?'✓ Visto, desmarcar':'Marcar como visto'}</button>
+      </div></div>`;
   });
-  h+=`<div class="card" style="margin-top:22px"><div class="tit">Terminou a leitura</div>
-  <p class="mini" style="margin-bottom:12px">O ciclo só fecha com card e questão. Ler de novo é o passo que menos rende.</p>
-  <button class="bt p g" style="margin-bottom:8px" onclick="ir('cards',{disciplina:'${d.id}'})">Ir para os flashcards</button>
+
+  h+=`<div class="card" style="margin-top:22px"><div class="tit">${lidas>=as.length?'Leitura completa':'Terminou por hoje'}</div>
+  <p class="mini" style="margin-bottom:12px">${lidas>=as.length
+    ? 'O ciclo só fecha com card e questão. Ler de novo é o passo que menos rende.'
+    : 'Faltam '+(as.length-lidas)+' seções. Cards e simulado rendem mais depois que a leitura acabar.'}</p>
+  <button class="bt p g" style="margin-bottom:8px" onclick="abrirCards('${d.id}')">Ir para os flashcards</button>
   <button class="bt g" onclick="iniciarSimulado('${d.id}')">Rodar o simulado</button></div></div>`;
   el.innerHTML=h;
+
+  /* Leva direto pra primeira secao nao lida, senao ele rola por cima do que ja leu.
+     Sincrono de proposito: requestAnimationFrame nao dispara em aba de fundo nem
+     enquanto a pagina nao esta compondo quadros, e o pulo simplesmente nao aconteceria.
+     Ler offsetTop aqui ja forca o layout, entao a posicao sai correta. */
+  const alvo=document.getElementById('proxima');
+  /* So pula se ja houver secao lida ACIMA pra pular. Com a disciplina zerada
+     o certo e comecar do topo, senao ele perderia a abertura, que enquadra a materia. */
+  if(alvo && lidas>0){
+    const topo=alvo.getBoundingClientRect().top+window.pageYOffset-84;  /* 74 do cabecalho fixo + folga */
+    if(topo>0) window.scrollTo(0,topo);
+  }
 }
 function marcarVisto(did,aid){
   const k=did+':'+aid;
-  if(S.aulas[k])delete S.aulas[k]; else { S.aulas[k]={em:Date.now()}; marcarAtividade(); }
+  if(S.aulas[k]) { delete S.aulas[k]; reabertas.add(aid); }   /* desmarcou: mantem aberta pra reler */
+  else { S.aulas[k]={em:Date.now()}; reabertas.delete(aid); marcarAtividade(); }
   salvar();render();
 }
 

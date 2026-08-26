@@ -60,6 +60,21 @@ Abre a trilha e responde uma pergunta só: **o que fazer agora, e isso fecha a s
   X dias até domingo, então o alvo de hoje é N dividido por X, recalculado toda vez que você abre.
   Ler 3 num dia e 0 no outro dá no mesmo, desde que domingo chegue zerado.
 
+## Como se lê uma disciplina
+
+A tela abre a disciplina inteira numa rolagem, dividida em seções. **Uma seção é uma aula**, e cada
+uma termina com o botão *Marcar como visto*.
+
+- **Ao reabrir, a tela pula direto para a primeira seção não lida.** Sem isso você rola por cima do
+  que já leu. Com a disciplina zerada ela começa do topo, para não pular a abertura.
+- **Seção lida encolhe para o título**, com selo `✓ lida`. Toque no título para reler.
+  Sair da disciplina volta tudo a encolher.
+- **Barra de leitura no topo:** quantas de quantas, e a meta do dia quando esta é a disciplina da vez.
+- **Tarja de peso** ao lado do título. O botão `80/20` esconde tudo que não é peso alto.
+
+> O pulo é chamado de forma **síncrona**, não dentro de `requestAnimationFrame`: rAF não dispara em
+> aba de segundo plano nem enquanto a página não compõe quadros, e o pulo simplesmente não aconteceria.
+
 ## As três réguas de progresso
 
 - **Visto:** percentual de aulas marcadas como lidas.
