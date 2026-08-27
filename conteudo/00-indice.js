@@ -23,7 +23,7 @@ window.INDICE = {
     {n:4, nome:"A gramática dos danos"},
     {n:5, nome:"Os ramos patrimoniais"},
     {n:6, nome:"Responsabilidade e mobilidade"},
-    {n:7, nome:"Ramos Diversos e o negócio"},
+    {n:7, nome:"Demais Ramos e o negócio"},
     {n:8, nome:"Reta final"}
   ],
   disciplinas: [
@@ -50,8 +50,10 @@ window.INDICE = {
     {id:"rc-geral",            nome:"Responsabilidade Civil Geral",        etapa:6, dia:4, modalidade:"Seguros de Danos",  questoes:10},
     {id:"automoveis",          nome:"Seguros de Automóveis",               etapa:6, dia:4, modalidade:"Seguros de Danos",  questoes:10},
     {id:"transportes",         nome:"Seguros de Transportes",              etapa:6, dia:3, modalidade:"Seguros de Danos",  questoes:10},
-    /* Etapa 7 · semanas 12 e 13 · as duas de 5 questoes juntas, e o fecho */
-    {id:"ramos-diversos",      nome:"Ramos Diversos (Seguro Garantia)",    etapa:7, dia:4, modalidade:"Seguros de Danos",  questoes:5},
+    /* Etapa 7 · semanas 12 e 13 · as duas de 5 questoes juntas, e o fecho.
+       Nome oficial no 84o EHCS e DEMAIS RAMOS, nao mais Ramos Diversos.
+       Apostila 1a edicao/2026: a disciplina foi reescrita do zero. */
+    {id:"ramos-diversos",      nome:"Demais Ramos (Seguro Garantia)",    etapa:7, dia:4, modalidade:"Seguros de Danos",  questoes:5},
     {id:"gestao-corretora",    nome:"Gestão de uma Corretora de Seguros",  etapa:7, dia:4, modalidade:"Seguros de Danos",  questoes:5},
     {id:"estrategias",         nome:"Estratégias de Comercialização",      etapa:7, dia:2, modalidade:"Vida e Previdência",questoes:10}
   ]
