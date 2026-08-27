@@ -812,7 +812,7 @@ function cartaoHoje(){
     h+=tarefa('agora',
       pl.temSim?`Refazer o simulado: o melhor foi <b>${Math.round(pl.melhorSim*100)}%</b>, abaixo dos 70%`
                :`Rodar o simulado para fechar a semana`,
-      '15 questões', `iniciarSimulado('${pl.disciplina.id}')`);
+      `${(pl.disciplina.simulado||[]).length} questões`, `iniciarSimulado('${pl.disciplina.id}')`);
   }
 
   /* o veredito: da pra fechar no prazo? */

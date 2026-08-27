@@ -196,8 +196,8 @@ window.CONTEUDO["teoria-geral"] = {
   simulado: [
     {id:"q1", peso:"alto",
      enunciado:"O dinheiro utilizado para o pagamento das indenizações aos segurados tem origem:",
-     alts:["No capital social e no lucro acumulado da sociedade seguradora.","No fundo mutuo formado pelos prêmios pagos pelo conjunto dos segurados.","Nas provisões constituidas pelo ressegurador contratado pela seguradora.","Em recursos aportados pela SUSEP para garantia do mercado."],
-     correta:1,
+     alts:["No fundo mutuo formado pelos prêmios pagos pelo conjunto dos segurados.","No capital social e no lucro acumulado da sociedade seguradora.","Nas provisões constituidas pelo ressegurador contratado pela seguradora.","Em recursos aportados pela SUSEP para garantia do mercado."],
+     correta:0,
      explicacao:"A indenização sai do fundo comum formado pelos prêmios. Esse é o significado prático do mutualismo. O patrimônio da seguradora é garantia de solvência, não a fonte ordinária da indenização.",
      erro:"Origem do dinheiro da indenização: fundo mutuo, não patrimônio da seguradora."},
 
@@ -210,8 +210,8 @@ window.CONTEUDO["teoria-geral"] = {
 
     {id:"q3", peso:"alto",
      enunciado:"Sobre a distinção entre cosseguro e resseguro, é correto afirmar que:",
-     alts:["No cosseguro várias seguradoras dividem o mesmo risco na mesma apólice; no resseguro a seguradora transfere parte do risco a um ressegurador.","No cosseguro a seguradora transfere o risco ao IRB; no resseguro divide com outra seguradora.","Ambos são a mesma operação, mudando apenas o nome conforme o ramo.","No cosseguro o segurado desconhece a operação; no resseguro ela consta obrigatoriamente da apólice."],
-     correta:0,
+     alts:["No cosseguro a seguradora transfere o risco ao IRB; no resseguro divide com outra seguradora.","Ambos são a mesma operação, mudando apenas o nome conforme o ramo.","No cosseguro o segurado desconhece a operação; no resseguro ela consta obrigatoriamente da apólice.","No cosseguro várias seguradoras dividem o mesmo risco na mesma apólice; no resseguro a seguradora transfere parte do risco a um ressegurador."],
+     correta:3,
      explicacao:"Cosseguro divide na horizontal, entre seguradoras, dentro da mesma apólice e com uma lider. Resseguro divide na vertical, em contrato próprio entre seguradora e ressegurador. O segurado enxerga o cosseguro na apólice, e não precisa enxergar o resseguro.",
      erro:"Cosseguro divide na horizontal (mesma apólice); resseguro na vertical (contrato próprio)."},
 
@@ -224,29 +224,29 @@ window.CONTEUDO["teoria-geral"] = {
 
     {id:"q5", peso:"alto",
      enunciado:"No Sistema Nacional de Seguros Privados, compete ao CNSP e a SUSEP, respectivamente:",
-     alts:["Fiscalizar as seguradoras e fixar as diretrizes da política de seguros.","Fixar as diretrizes e normas da política de seguros e fiscalizar a constituição e o funcionamento das seguradoras.","Registrar os corretores e julgar recursos de sinistro.","Autorizar planos de saúde e fiscalizar fundos de pensão."],
-     correta:1,
+     alts:["Fiscalizar as seguradoras e fixar as diretrizes da política de seguros.","Registrar os corretores e julgar recursos de sinistro.","Fixar as diretrizes e normas da política de seguros e fiscalizar a constituição e o funcionamento das seguradoras.","Autorizar planos de saúde e fiscalizar fundos de pensão."],
+     correta:2,
      explicacao:"O CNSP normatiza, editando Resoluções. A SUSEP executa e fiscaliza, autorizando funcionamento, aplicando penalidades e editando Circulares. E a inversão mais cobrada da prova.",
      erro:"CNSP normatiza (Resoluções); SUSEP fiscaliza e executa (Circulares)."},
 
     {id:"q6", peso:"alto",
      enunciado:"A fiscalização dos planos privados de assistência a saúde e das entidades fechadas de previdência complementar cabe, respectivamente:",
-     alts:["A SUSEP e ao CNSP.","A ANS e a PREVIC.","A PREVIC e a ANS.","A SUSEP em ambos os casos."],
-     correta:1,
+     alts:["A ANS e a PREVIC.","A SUSEP e ao CNSP.","A PREVIC e a ANS.","A SUSEP em ambos os casos."],
+     correta:0,
      explicacao:"Saúde suplementar é da ANS e previdência fechada é da PREVIC. A SUSEP fica com seguros, capitalização, resseguro e previdência complementar aberta.",
      erro:"Saúde é ANS, previdência fechada é PREVIC, aberta é SUSEP."},
 
     {id:"q7", peso:"alto",
      enunciado:"O princípio segundo o qual a indenização não pode ultrapassar o valor do interesse segurado, de modo que o seguro não gere lucro ao segurado, é o princípio:",
-     alts:["Do mutualismo.","Da máxima boa-fé.","Indenitário.","Da dispersão de riscos."],
-     correta:2,
+     alts:["Do mutualismo.","Indenitário.","Da máxima boa-fé.","Da dispersão de riscos."],
+     correta:1,
      explicacao:"O princípio indenitário limita a indenização ao prejuízo. Vale nos seguros de danos e não se aplica aos seguros de pessoas, em que o capital é livremente estipulado.",
      erro:"Princípio indenitário: indenização limitada ao prejuízo, só em seguros de danos."},
 
     {id:"q8", peso:"alto",
      enunciado:"Assinale a alternativa correta sobre seguros de pessoas:",
-     alts:["Aplica-se o princípio indenitário, limitando o capital ao prejuízo econômico comprovado.","O segurador sub-roga-se nos direitos do segurado contra o causador do dano.","O segurado pode contratar mais de um seguro sobre o mesmo interesse e receber o capital de todos.","Havendo mais de uma apólice, procede-se ao rateio entre as seguradoras."],
-     correta:2,
+     alts:["Aplica-se o princípio indenitário, limitando o capital ao prejuízo econômico comprovado.","O segurador sub-roga-se nos direitos do segurado contra o causador do dano.","Havendo mais de uma apólice, procede-se ao rateio entre as seguradoras.","O segurado pode contratar mais de um seguro sobre o mesmo interesse e receber o capital de todos."],
+     correta:3,
      explicacao:"Em seguros de pessoas o capital é livremente estipulado, não há princípio indenitário, não há rateio entre apólices e não há sub-rogação. Por isso o segurado acumula e recebe de todas.",
      erro:"Seguro de pessoas: acumula apólices, sem rateio, sem sub-rogação, sem princípio indenitário."},
 
@@ -259,29 +259,29 @@ window.CONTEUDO["teoria-geral"] = {
 
     {id:"q10", peso:"alto",
      enunciado:"João, locatário de um imóvel, pretende contratar seguro sobre o bem que aluga. Nessa situação:",
-     alts:["Não pode contratar, pois não é proprietário do imóvel.","Pode contratar, pois possui interesse legítimo sobre o bem.","So pode contratar com anuência expressa da SUSEP.","Pode contratar, mas a apólice será nula por falta de interesse segurável."],
-     correta:1,
+     alts:["Não pode contratar, pois não é proprietário do imóvel.","So pode contratar com anuência expressa da SUSEP.","Pode contratar, mas a apólice será nula por falta de interesse segurável.","Pode contratar, pois possui interesse legítimo sobre o bem."],
+     correta:3,
      explicacao:"O que a lei exige é interesse legítimo, não propriedade. O locatário responde pelo imóvel e por isso tem interesse segurável.",
      erro:"Interesse segurável exige interesse legítimo, não propriedade."},
 
     {id:"q11", peso:"medio",
      enunciado:"Sobre o efeito da conduta do segurado na cobertura, é correto afirmar:",
-     alts:["Tanto o dolo quanto a culpa simples do segurado afastam a garantia.","O dolo afasta a garantia, mas a culpa simples permanece coberta.","A culpa simples afasta a garantia, mas o dolo é coberto se houver cláusula expressa.","Nenhuma conduta do segurado afeta a cobertura contratada."],
-     correta:1,
+     alts:["O dolo afasta a garantia, mas a culpa simples permanece coberta.","Tanto o dolo quanto a culpa simples do segurado afastam a garantia.","A culpa simples afasta a garantia, mas o dolo é coberto se houver cláusula expressa.","Nenhuma conduta do segurado afeta a cobertura contratada."],
+     correta:0,
      explicacao:"O ato doloso do segurado é risco excluído e torna nulo o contrato para aquele evento. A culpa simples, por imprudência ou negligência, continua coberta, e é justamente ela que faz o seguro de automóvel existir.",
      erro:"Dolo afasta a garantia; culpa simples permanece coberta."},
 
     {id:"q12", peso:"medio",
      enunciado:"A etapa do processo de sinistro destinada a apurar as causas do evento e verificar se há cobertura na apólice denomina-se:",
-     alts:["Liquidação.","Regulação.","Subscrição.","Retrocessão."],
-     correta:1,
+     alts:["Liquidação.","Subscrição.","Regulação.","Retrocessão."],
+     correta:2,
      explicacao:"Regular é investigar o que houve e se cabe pagar. Liquidar é apurar o quanto e efetuar o pagamento. Subscrição é a aceitação do risco, lá no início da operação.",
      erro:"Regulação apura cobertura; liquidação apura valor e paga."},
 
     {id:"q13", peso:"medio",
      enunciado:"Após indenizar integralmente o segurado por um veiculo sinistrado, a seguradora:",
-     alts:["Deve devolver os salvados ao segurado, que já recebeu a indenização.","Passa a ser proprietária dos salvados.","Divide os salvados com o segurado, na proporção da franquia.","Deve entregar os salvados a SUSEP para leilão."],
-     correta:1,
+     alts:["Deve devolver os salvados ao segurado, que já recebeu a indenização.","Divide os salvados com o segurado, na proporção da franquia.","Deve entregar os salvados a SUSEP para leilão.","Passa a ser proprietária dos salvados."],
+     correta:3,
      explicacao:"Pago o valor integral, os salvados pertencem a seguradora. Se ficassem com o segurado, ele receberia duas vezes pelo mesmo bem, o que viola o princípio indenitário.",
      erro:"Salvados pertencem a seguradora após indenização integral."},
 
@@ -294,8 +294,8 @@ window.CONTEUDO["teoria-geral"] = {
 
     {id:"q15", peso:"medio",
      enunciado:"O Sistema Nacional de Seguros Privados foi instituido por:",
-     alts:["Lei 4.594, de 1964.","Decreto-Lei 73, de 1966.","Lei Complementar 126, de 2007.","Código Civil de 2002."],
-     correta:1,
+     alts:["Lei 4.594, de 1964.","Lei Complementar 126, de 2007.","Decreto-Lei 73, de 1966.","Código Civil de 2002."],
+     correta:2,
      explicacao:"O Decreto-Lei 73 de 1966 criou o Sistema Nacional de Seguros Privados. A Lei 4.594 de 1964 regula a profissão do corretor, e a Lei Complementar 126 de 2007 abriu o mercado de resseguro.",
      erro:"Decreto-Lei 73/1966 criou o SNSP. Lei 4.594/1964 é o corretor. LC 126/2007 é o resseguro."}
   ]

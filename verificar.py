@@ -89,6 +89,26 @@ for f in arquivos:
         if b not in BLOCOS:
             erros.append('%s: bloco tipo "%s" desconhecido' % (f, b))
 
+    # gabarito viciado: quem escreve questao tende a por a certa como
+    # segunda alternativa. O app embaralha as QUESTOES, nunca as
+    # ALTERNATIVAS, entao o vicio chega inteiro em quem estuda.
+    # Conserto: python redistribuir_gabarito.py conteudo/<arquivo>.js
+    corretas = [int(x) for x in re.findall(r'correta:(\d+)', t)]
+    if corretas:
+        for letra in range(4):
+            quantas = corretas.count(letra)
+            if quantas > len(corretas) * 0.40:
+                erros.append('%s: gabarito viciado, %d de %d corretas na letra %s '
+                             '(rode redistribuir_gabarito.py)'
+                             % (f, quantas, len(corretas), 'ABCD'[letra]))
+        # padrao ciclico e tao ruim quanto: da pra acertar contando
+        for periodo in (1, 2, 3, 4):
+            if len(corretas) >= periodo * 3 and all(
+                    c == corretas[i % periodo] for i, c in enumerate(corretas)):
+                erros.append('%s: gabarito repete a cada %d questoes '
+                             '(rode redistribuir_gabarito.py)' % (f, periodo))
+                break
+
     n_a = len(re.findall(r'titulo:"', t))
     n_c = len(re.findall(r'\bid:"c\d+"', t))
     n_q = len(re.findall(r'\bid:"q\d+"', t))
