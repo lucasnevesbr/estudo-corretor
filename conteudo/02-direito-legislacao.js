@@ -1,7 +1,7 @@
 /* ETAPA 1 - Disciplina 2 de 20: Direito e Legislação do Seguro (10 questões, 1o dia) */
 
 window.CONTEUDO["direito-legislacao"] = {
-  abertura: "Aqui a resposta certa não se deduz por lógica, ela está escrita em algum lugar. E a disciplina mais decoreba do 1o dia, e também a que mais recompensa quem estuda pela lei em vez de estudar por resumo.",
+  abertura: "⚠️ ATENÇÃO, ESTA DISCIPLINA ESTÁ EM REVISÃO. A Lei 15.040, de 09/12/2024, o novo marco legal do contrato de seguro, REVOGOU os artigos 757 a 802 do Código Civil e o artigo 206, parágrafo 1o, inciso II, e está em vigor desde 11/12/2025. As aulas abaixo ainda citam esses artigos como vigentes. O conteúdo continua útil, porque a lei nova reaproveita boa parte dos conceitos, mas NÃO decore número de artigo do Código Civil até eu reescrever. Aviso posto em 27/08/2026. || Aqui a resposta certa não se deduz por lógica, ela está escrita em algum lugar. E a disciplina mais decoreba do 1o dia, e também a que mais recompensa quem estuda pela lei em vez de estudar por resumo.",
 
   aulas: [
     {
