@@ -390,10 +390,20 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
    110 caracteres (o legivel e 45 a 75) e os rotulos ficavam em 9,5px.
    A saida nao e reflow, e coluna estreita e escala tipografica maior:
    o mesmo app, so que proporcional a tela. Medido em 27/08/2026. */
+/* Largura: vale em QUALQUER tela larga, celular deitado incluido.
+   Sem isto, o iPhone na horizontal (932px) volta a ter linha de 110
+   caracteres, que e o mesmo defeito do iPad. */
 @media(min-width:700px){
-  body{font-size:17px;padding-bottom:96px}
   .wrap,.topo,nav .nwrap{max-width:560px}
   .wrap{padding:24px 20px 0}
+  .semana7{max-width:392px;margin-left:auto;margin-right:auto;gap:7px}
+}
+
+/* Escala tipografica: so quando ha ALTURA para ela. O iPhone deitado tem
+   largura de tablet e cerca de 430px de altura; subir a fonte la comeria
+   a tela inteira com cabecalho e barra de navegacao. */
+@media(min-width:700px) and (min-height:600px){
+  body{font-size:17px;padding-bottom:96px}
   .topo .marca{font-size:17px}
   .topo .sub{font-size:12px}
 
@@ -424,8 +434,7 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
   .status .cd .dias{font-size:26px}
   .status .cd .txt{font-size:12.5px}
 
-  /* fita dos 7 dias: sem teto, cada celula virava um botao de 94px */
-  .semana7{max-width:392px;margin-left:auto;margin-right:auto;gap:7px}
+  /* fita dos 7 dias: o teto de largura esta no bloco acima */
   .d7 .l{font-size:11px}
   .d7 .n{font-size:15px}
 
