@@ -68,11 +68,15 @@ for f in arquivos:
         if not re.fullmatch(r'[a-z]\d+', i):
             erros.append('%s: id "%s" fora do padrao (a1, c12, q3)' % (f, i))
 
-    # chaves de objeto que o app le por nome: nunca podem ser acentuadas
+    # chaves de objeto que o app le por nome: nunca podem ser acentuadas.
+    # A busca roda no texto SEM o miolo das strings, senao um titulo de aula
+    # como "A conta do titulo: ..." dispara falso positivo. Chave de objeto
+    # nunca mora dentro de aspas neste formato.
+    sem_strings = re.sub('"[^"]*"', '""', t)
     for chave_obj in ['explicacao', 'titulo', 'abertura', 'aulas', 'flashcards',
                       'simulado', 'blocos', 'enunciado', 'alts', 'correta', 'erro', 'peso']:
         acentuada = chave_obj.replace('cao', 'ção').replace('titulo', 'título')
-        if acentuada != chave_obj and (acentuada + ':') in t:
+        if acentuada != chave_obj and (acentuada + ':') in sem_strings:
             erros.append('%s: chave "%s:" foi acentuada. O app le por nome.' % (f, acentuada))
 
     # pesos validos

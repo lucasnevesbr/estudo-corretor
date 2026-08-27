@@ -384,6 +384,60 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
   .bolha{width:74px;height:74px;font-size:26px}
   .bolha.atual{width:86px;height:86px;font-size:30px}
 }
+
+/* iPad e telas grandes. O app foi desenhado para 375px de largura, e sem
+   este bloco ele so estica: no iPad de 768px a linha de texto passava de
+   110 caracteres (o legivel e 45 a 75) e os rotulos ficavam em 9,5px.
+   A saida nao e reflow, e coluna estreita e escala tipografica maior:
+   o mesmo app, so que proporcional a tela. Medido em 27/08/2026. */
+@media(min-width:700px){
+  body{font-size:17px;padding-bottom:96px}
+  .wrap,.topo,nav .nwrap{max-width:560px}
+  .wrap{padding:24px 20px 0}
+  .topo .marca{font-size:17px}
+  .topo .sub{font-size:12px}
+
+  /* leitura corrida */
+  .aula h2{font-size:23px}
+  .secao h3{font-size:17.5px}
+  .secao p,.secao li{font-size:17px;line-height:1.62}
+  table{font-size:14.5px}
+  .fc .perg{font-size:21px}
+  .fc .resp{font-size:17px}
+  .q .en{font-size:17.5px}
+  .alt{font-size:15.5px}
+  .expl{font-size:15.5px}
+  .aviso{font-size:14.5px}
+
+  /* cartao do dia */
+  .plano{padding:18px}
+  .plano .dia1{font-size:22px}
+  .plano .disc1{font-size:12.5px}
+  .plano .seq{font-size:12.5px}
+  .plano .veredito{font-size:14.5px;padding:12px 14px}
+  .tarefa .tx{font-size:15.5px}
+  .tarefa .quanto{font-size:12px}
+
+  /* faixa de status */
+  .status .sem{font-size:30px}
+  .status .de{font-size:12.5px}
+  .status .cd .dias{font-size:26px}
+  .status .cd .txt{font-size:12.5px}
+
+  /* fita dos 7 dias: sem teto, cada celula virava um botao de 94px */
+  .semana7{max-width:392px;margin-left:auto;margin-right:auto;gap:7px}
+  .d7 .l{font-size:11px}
+  .d7 .n{font-size:15px}
+
+  /* trilha */
+  .hoje .txt{font-size:11px}
+  .etapa-cab .nm{font-size:17px}
+  .rot{max-width:250px}
+  .passo .rot .nm{font-size:14.5px}
+  .passo .rot .me{font-size:11px}
+  .met .n{font-size:25px}
+  .met .l{font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -417,6 +471,7 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 <script src="conteudo/02-direito-legislacao.js"></script>
 <script src="conteudo/03-lgpd.js"></script>
 <script src="conteudo/04-matematica.js"></script>
+<script src="conteudo/05-capitalizacao.js"></script>
 
 <script>
 /* =========================================================
