@@ -415,7 +415,8 @@ td{padding:7px 9px;border-bottom:1px solid var(--borda);color:#ded9cd;vertical-a
 <script src="conteudo/00-indice.js"></script>
 <script src="conteudo/01-teoria-geral.js"></script>
 <script src="conteudo/02-direito-legislacao.js"></script>
-<script src="conteudo/03-matematica.js"></script>
+<script src="conteudo/03-lgpd.js"></script>
+<script src="conteudo/04-matematica.js"></script>
 
 <script>
 /* =========================================================
@@ -431,23 +432,39 @@ let reabertas=new Set();
 
 /* =========================================================
    CALENDARIO DA TRILHA
-   Semana 1 comeca na segunda 24/08/2026. Uma disciplina por
-   semana, na ordem do INDICE. Depois das 20 vem a reta final
-   (4 semanas) e a prova em 08/02/2027.
+   Semana 1 comeca na segunda 24/08/2026. A semana 14 termina no
+   domingo 29/11 e a prova comeca na segunda seguinte, 30/11/2026.
+   Encaixe exato: 14 semanas cheias, sem sobra e sem falta.
+
+   ALVO TROCADO EM 27/08/2026: era 08/02/2027 (1a edicao 2027, que
+   nem regulamento tem ainda) e passou a ser a 3a edicao de 2026,
+   30/11 a 03/12. Inscricao ate 11/11/2026, resultado em 26/01/2027.
+
+   Nao cabe mais uma disciplina por semana: sao 20 disciplinas em 13
+   semanas, entao SETE semanas carregam duas. SEM_DISC[i] diz a semana
+   da disciplina i, na ordem do INDICE, e tem que ser nao decrescente
+   pra trilha desenhar na ordem certa.
    ========================================================= */
 const INICIO=new Date(2026,7,24);            /* 24/08/2026, uma segunda */
-const PROVA=new Date(2027,1,8);              /* 08/02/2027 */
-const SEM_RETA=4;
+const PROVA=new Date(2026,10,30);            /* 30/11/2026, 1o dia de prova */
+const FIM_INSCRICAO=new Date(2026,10,11);    /* 11/11/2026, ultimo dia */
+const SEM_RETA=1;
+const TOTAL_SEM=14;
+/* teo dir lgpd | mat cap merc | pes | prev | int ger | comp luc | eng rur | rc | auto transp | rd gest | estrat */
+const SEM_DISC=[1,2,2, 3,4,4, 5, 6, 7,7, 8,8, 9,9, 10, 11,11, 12,12, 13];
 function diaDe(dt){return Math.floor(new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()).getTime()/86400000)}
-function semanaDaDisciplina(i){return i+1}
+function semanaDaDisciplina(i){return SEM_DISC[i]!==undefined?SEM_DISC[i]:(SEM_DISC[SEM_DISC.length-1]+1)}
+/* indices das disciplinas que dividem a semana n */
+function indicesDaSemana(n){const r=[];SEM_DISC.forEach((s,i)=>{if(s===n)r.push(i)});return r}
 function inicioDaSemana(n){const d=new Date(INICIO);d.setDate(d.getDate()+(n-1)*7);return d}
 function ddmm(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')}
-/* em que semana da trilha estamos hoje (pode passar de 24) */
+/* em que semana da trilha estamos hoje (pode passar de 14) */
 function semanaHoje(){
   const dif=HOJE()-diaDe(INICIO);
   return dif<0?0:Math.floor(dif/7)+1;
 }
 function diasAteProva(){return diaDe(PROVA)-HOJE()}
+function diasAteInscricao(){return diaDe(FIM_INSCRICAO)-HOJE()}
 
 function vazio(){return{versao:1,aulas:{},cards:{},simulados:[],erros:[],criado:Date.now(),ultimoBackup:0,escondeuInstalar:0,diasAtivos:[]}}
 /* Registra que HOUVE estudo hoje. Chamado ao marcar aula, revisar card e fechar simulado.
@@ -609,7 +626,7 @@ function planoDeHoje(){
   let i=ds.findIndex(d=>!concluida(d));
   if(i<0) return {acabou:true};
   const d=ds[i];
-  const semDisc=i+1;                                  /* semana planejada desta disciplina */
+  const semDisc=semanaDaDisciplina(i);                 /* semana planejada desta disciplina */
   const iniSem=diaDe(inicioDaSemana(semDisc));
   const fimSem=iniSem+6;                              /* domingo */
   const hoje=HOJE();
@@ -628,6 +645,19 @@ function planoDeHoje(){
   const lidas=pronto?(d.aulas||[]).filter(a=>S.aulas[d.id+':'+a.id]).length:0;
   const faltamAulas=Math.max(0,totalAulas-lidas);
 
+  /* A SEMANA PODE TER DUAS DISCIPLINAS. O ritmo do dia tem que sair do
+     que falta na SEMANA inteira, nao so na disciplina aberta, senao o
+     app promete um numero baixo na segunda e cobra o dobro na sexta.
+     Disciplina sem conteudo carregado nao entra na conta. */
+  const irmas=indicesDaSemana(semDisc).map(k=>ds[k]).filter(Boolean);
+  let faltamSemana=0, totalSemana=0;
+  irmas.forEach(x=>{
+    if(concluida(x)||!temConteudo(x)) { if(temConteudo(x)) totalSemana+=(x.aulas||[]).length; return; }
+    const n=(x.aulas||[]).length;
+    totalSemana+=n;
+    faltamSemana+=Math.max(0,n-(x.aulas||[]).filter(a=>S.aulas[x.id+':'+a.id]).length);
+  });
+
   let vencHoje=0; ds.filter(temConteudo).forEach(x=>vencHoje+=vencidos(x).length);
   const novosDisc=pronto?novos(d).length:0;
   const simOk=p.melhorSim>=0.7;
@@ -635,7 +665,8 @@ function planoDeHoje(){
   return {
     acabou:false, atrasado, disciplina:d, pronto, semDisc, iniSem, fimSem, restam,
     totalAulas, lidas, faltamAulas,
-    aulasHoje: faltamAulas? Math.ceil(faltamAulas/restam) : 0,
+    irmas, naSemana:irmas.length, totalSemana, faltamSemana,
+    aulasHoje: faltamSemana? Math.ceil(faltamSemana/restam) : 0,
     vencHoje, novosDisc, simOk, temSim:p.temSim, melhorSim:p.melhorSim
   };
 }
@@ -666,7 +697,7 @@ function cartaoHoje(){
   const pl=planoDeHoje();
   const seq=sequencia();
   if(pl.acabou) return `<div class="plano"><div class="cab"><div class="dia1">Trilha fechada</div></div>
-    <div class="veredito">As 20 disciplinas estão concluídas. O que resta é reta final: lista de erro, cards vencidos e simulados repetidos.</div></div>`;
+    <div class="veredito">As 20 disciplinas estão concluídas. O que resta é a reta final: lista de erro, cards vencidos e simulados repetidos até 29/11.</div></div>`;
 
   const d=new Date();
   const nomeHoje=NOMES_DIA[d.getDay()];
@@ -675,7 +706,7 @@ function cartaoHoje(){
   let h=`<div class="plano">
     <div class="cab">
       <div class="dia1">${nomeHoje}</div>
-      <div class="disc1">Semana ${pl.semDisc} · ${esc(pl.disciplina.nome)}</div>
+      <div class="disc1">Semana ${pl.semDisc} de ${TOTAL_SEM} · ${pl.naSemana>1?esc(pl.irmas.map(x=>x.nome).join(' + ')):esc(pl.disciplina.nome)}</div>
       <div class="seq ${seq?'':'fria'}">${seq?seq+(seq>1?' dias seguidos':' dia'):'sem sequência'}</div>
     </div>
     ${fitaDaSemana(pl)}`;
@@ -693,8 +724,9 @@ function cartaoHoje(){
 
   /* 2. leitura, com o ritmo calculado */
   if(pl.faltamAulas){
+    const atravessa = pl.aulasHoje>pl.faltamAulas;
     h+=tarefa(pl.vencHoje?'depois':'agora',
-      `Ler <b>${pl.aulasHoje} ${pl.aulasHoje>1?'aulas':'aula'}</b> de ${esc(pl.disciplina.nome)}`,
+      `Ler <b>${pl.aulasHoje} ${pl.aulasHoje>1?'aulas':'aula'}</b> ${atravessa?`: acaba ${esc(pl.disciplina.nome)} e emenda na seguinte`:`de ${esc(pl.disciplina.nome)}`}`,
       `${pl.lidas} de ${pl.totalAulas} lidas`,
       `ir('aulas',{disciplina:'${pl.disciplina.id}'})`);
   }else{
@@ -723,11 +755,11 @@ function cartaoHoje(){
   const fim=new Date(pl.fimSem*86400000);
   const qdo=String(fim.getUTCDate()).padStart(2,'0')+'/'+String(fim.getUTCMonth()+1).padStart(2,'0');
   if(pl.atrasado){
-    h+=`<div class="veredito ruim"><b>Você passou do domingo desta disciplina.</b> Não tem drama: termine ${esc(pl.disciplina.nome)} nos próximos ${pl.restam} ${pl.restam>1?'dias':'dia'} e siga. Atrasar uma semana come a reta final lá na frente, atrasar três muda o alvo para a edição de julho.</div>`;
+    h+=`<div class="veredito ruim"><b>Você passou do domingo desta disciplina.</b> Não tem drama: termine ${esc(pl.disciplina.nome)} nos próximos ${pl.restam} ${pl.restam>1?'dias':'dia'} e siga. Atrasar uma semana come a reta final lá na frente, na trilha de 14 semanas não há gordura: atrasar duas semanas já empurra o alvo de volta para a edição de fevereiro de 2027.</div>`;
   }else if(!pl.faltamAulas && pl.simOk){
-    h+=`<div class="veredito">Semana fechada antes do prazo. O melhor uso do tempo que sobrou é <b>card vencido</b>, não adiantar a próxima disciplina: a revisão é o que segura as 24 semanas.</div>`;
+    h+=`<div class="veredito">Semana fechada antes do prazo. O melhor uso do tempo que sobrou é <b>card vencido</b>, não adiantar a próxima disciplina: a revisão é o que segura as 14 semanas.</div>`;
   }else if(pl.faltamAulas){
-    h+=`<div class="veredito">Não é uma aula por dia. São <b>${pl.totalAulas} aulas em 7 dias</b>, e sobram <b>${pl.restam} ${pl.restam>1?'dias':'dia'}</b> até ${qdo}. Nesse ritmo, <b>${pl.aulasHoje} hoje</b> fecha no prazo. Ler 3 num dia e 0 no outro dá no mesmo, desde que domingo chegue zerado.</div>`;
+    h+=`<div class="veredito">Não é uma aula por dia. ${pl.naSemana>1?`Esta semana carrega <b>duas disciplinas</b>, <b>${pl.totalSemana} aulas em 7 dias</b>`:`São <b>${pl.totalSemana} aulas em 7 dias</b>`}, e sobram <b>${pl.restam} ${pl.restam>1?'dias':'dia'}</b> até ${qdo}. Nesse ritmo, <b>${pl.aulasHoje} hoje</b> fecha no prazo. Ler 3 num dia e 0 no outro dá no mesmo, desde que domingo chegue zerado.</div>`;
   }else{
     h+=`<div class="veredito">Aulas lidas. Falta o simulado para o nó virar verde e destravar a próxima disciplina. Você tem até <b>${qdo}</b>.</div>`;
   }
@@ -743,7 +775,7 @@ function trilha(){
   if(iAtual<0) iAtual=ds.length;
 
   const semHoje=semanaHoje();
-  const semAtual=iAtual+1;
+  const semAtual=iAtual<ds.length?semanaDaDisciplina(iAtual):TOTAL_SEM;
   const atrasoSem=semHoje-semAtual;
 
   let h='';
@@ -756,14 +788,14 @@ function trilha(){
   h+=`<div class="status">
     <div class="l1">
       <div>
-        <div class="sem">Semana ${semHoje>24?24:(semHoje||1)}</div>
-        <div class="de">de 24 · rumo a 08/02/2027</div>
+        <div class="sem">Semana ${semHoje>TOTAL_SEM?TOTAL_SEM:(semHoje||1)}</div>
+        <div class="de">de ${TOTAL_SEM} · rumo a 30/11/2026</div>
       </div>
       <span class="tag ${emDia?'ok':'ruim'}">${emDia?'Em dia':'Atrasado '+atrasoSem+(atrasoSem>1?' semanas':' semana')}</span>
     </div>
     <div class="cd">
       <div class="dias">${diasAteProva()}</div>
-      <div class="txt">dias até o 1º dia de prova.<br>Inscrição fecha por volta de 22/01/2027.</div>
+      <div class="txt">dias até o 1º dia de prova.<br>${diasAteInscricao()>0?`<b>Inscrição fecha em 11/11</b>, daqui a ${diasAteInscricao()} dias.`:`Inscrição encerrada em 11/11/2026.`}</div>
     </div>
   </div>`;
 
@@ -850,21 +882,21 @@ function trilha(){
   });
 
   /* reta final e prova */
-  const semRetaIni=ds.length+1;
+  const semRetaIni=TOTAL_SEM-SEM_RETA+1;
   h+=`<div class="etapa-cab ${semHoje>=semRetaIni?'viva':''}">
-    <div><div class="n">Etapa 9</div><div class="nm">Reta final</div></div>
-    <div class="cont">${SEM_RETA} semanas</div>
+    <div><div class="n">Etapa 8</div><div class="nm">Reta final</div></div>
+    <div class="cont">${SEM_RETA} semana</div>
   </div>`;
   h+=`<div class="passo travado"><div class="no">
     <div style="position:relative"><button class="bolha vazia" onclick="noVazio()">·</button></div>
     <div class="rot"><div class="nm">Lista de erro e simulados gerais</div>
-    <div class="me">Sem ${semRetaIni} a ${semRetaIni+SEM_RETA-1} · ${ddmm(inicioDaSemana(semRetaIni))} a 07/02</div></div>
+    <div class="me">Sem ${semRetaIni} · ${ddmm(inicioDaSemana(semRetaIni))} a 29/11</div></div>
   </div></div>`;
 
   h+=`<div class="passo"><div class="no">
-    <div style="position:relative"><button class="bolha prova" onclick="alert('83º EHCS, 1ª edição 2027.\\n\\nProvas: 08 a 11 de fevereiro de 2027, das 18h às 19h, online.\\nModalidade: Todos os Ramos, 200 questões em 4 dias.\\n\\n70% por bloco, sem zerar nenhuma disciplina.')">▲</button></div>
+    <div style="position:relative"><button class="bolha prova" onclick="alert('EHCS, 3ª edição de 2026.\\n\\nProvas: 30/11 e 01, 02 e 03/12/2026.\\nEntrada entre 18h e 19h; os 120 minutos começam quando você entra.\\n\\nModalidade: Todos os Ramos, 200 questões em 4 dias.\\n70% por bloco, sem zerar nenhuma disciplina.\\n\\nInscrição até 11/11/2026 · R$ 2.220,00\\nResultado oficial: 26/01/2027.')">▲</button></div>
     <div class="rot"><div class="nm">EXAME · Todos os Ramos</div>
-    <div class="me"><b>08 a 11/02/2027</b> · 200 questões</div></div>
+    <div class="me"><b>30/11 a 03/12/2026</b> · 200 questões</div></div>
   </div></div>`;
   h+='</div>';
 

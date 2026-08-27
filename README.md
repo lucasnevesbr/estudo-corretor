@@ -9,10 +9,15 @@ modalidade **Todos os Ramos**.
 
 | Referência | Data |
 |---|---|
-| Inscrição | abre ~09/12/2026, fecha ~22/01/2027 |
-| Provas | 08 a 11 de fevereiro de 2027, 18h às 19h, online |
-| Resultado oficial | ~08/04/2027 |
-| Taxa Todos os Ramos | ~R$ 2.330,00 |
+| Inscrição | **até 11/11/2026** |
+| Provas | **30/11 e 01, 02 e 03/12/2026**, online |
+| Horário | entrada entre 18h e 19h; os **120 minutos** começam quando o candidato entra |
+| Resultado oficial | 26/01/2027 |
+| Taxa Todos os Ramos | R$ 2.220,00 (12x R$ 185,00) |
+
+Alvo trocado em 27/08/2026: era a 1ª edição de 2027, em fevereiro, e passou para a **3ª edição de
+2026**. A trilha encolheu de 24 para **14 semanas**: 13 de conteúdo e 1 de reta final. A semana 14
+termina no domingo 29/11 e a prova começa na segunda seguinte.
 
 São 200 questões em 4 dias, divididas em 3 blocos independentes. Aprovação é **70% por bloco,
 sem zerar nenhuma disciplina**. Não existe compensação entre blocos.
@@ -96,7 +101,7 @@ No iPhone: Safari, botão de compartilhar, **Adicionar à Tela de Início**.
 No Android: Chrome, menu de três pontos, **Instalar app**.
 
 Não é só conforto. O Safari apaga o `localStorage` de site comum depois de **7 dias sem uso**, e o
-app instalado na tela de início escapa dessa regra. Como a trilha dura 24 semanas e o SM-2 guarda o
+app instalado na tela de início escapa dessa regra. Como a trilha dura 14 semanas e o SM-2 guarda o
 calendário de revisão de cada card, perder o armazenamento é perder o estudo, não só a tela.
 
 ## Onde mora o progresso, e quem alcança ele
@@ -152,7 +157,7 @@ no `index.html`.
 
 ```
 index.html            motor: progresso, SM-2, simulado, backup
-conteudo/00-indice.js as 20 disciplinas, agrupadas nas 9 etapas da trilha
+conteudo/00-indice.js as 20 disciplinas, agrupadas nas 8 etapas da trilha
 conteudo/NN-*.js      uma disciplina por arquivo
 ```
 
